@@ -1,4 +1,4 @@
-name: Backend_Action
+name: Frontend_Action
 
 on:
     push:
