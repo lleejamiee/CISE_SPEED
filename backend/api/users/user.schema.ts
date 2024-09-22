@@ -3,23 +3,23 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema()
 export class Authentication {
   @Prop({ required: true, select: false })
-  password: String;
+  password: string;
   @Prop({ select: false })
-  salt: String;
+  salt: string;
   @Prop({ select: false })
-  sessionToken: String;
+  sessionToken: string;
 }
 
 @Schema()
 export class User {
   @Prop({ required: true })
-  username: String;
+  username: string;
   @Prop({ required: true })
-  email: String;
+  email: string;
   @Prop()
   authentication: Authentication;
   @Prop()
-  role: String;
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

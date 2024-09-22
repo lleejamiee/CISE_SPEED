@@ -7,7 +7,7 @@ import { CreateUserDto } from './create-user.dto';
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-  test(): String {
+  test(): string {
     return 'user route testing';
   }
 
@@ -15,17 +15,17 @@ export class UserService {
     return await this.userModel.create(createUserDto);
   }
 
-  async getUserBySessionToke(sessionToken: String): Promise<User> {
+  async getUserBySessionToke(sessionToken: string): Promise<User> {
     return await this.userModel.findOne({
       'authentication.sessionToken': sessionToken,
     });
   }
 
-  async getUserByUsername(username: String): Promise<User> {
+  async getUserByUsername(username: string): Promise<User> {
     return await this.userModel.findOne({ username });
   }
 
-  async getUserByEmail(email: String): Promise<User> {
+  async getUserByEmail(email: string): Promise<User> {
     return await this.userModel.findOne({ email });
   }
 }
