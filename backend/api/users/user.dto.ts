@@ -10,3 +10,9 @@ export class Authentication {
   salt: string;
   sessionToken: string;
 }
+
+export class LoginCredentialDto {
+  username: string;
+  email: string;
+  authentication: Authentication;
+}

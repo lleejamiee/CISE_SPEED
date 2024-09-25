@@ -9,8 +9,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { error } from 'console';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto, LoginCredentialDto } from './user.dto';
 import { authentication, random } from 'utilities/encryption';
+import { User } from './user.schema';
 
 @Controller('api/users')
 export class UserController {
@@ -24,7 +25,6 @@ export class UserController {
   @Post('/')
   async addUser(@Body() createUserDto: CreateUserDto) {
     try {
-      console.log(createUserDto);
       // Check if email, username, password, and role fields are filled in
       if (
         !createUserDto.email ||
@@ -79,11 +79,22 @@ export class UserController {
     }
   }
 
-  // Find a user by username
-  @Get('/:username')
-  async findUserByUsername(@Param('username') username: string) {
+  // Login with username
+  @Get('/login')
+  async authenticateUser(@Body() loginCredential: LoginCredentialDto) {
     try {
-      return this.userService.getUserByUsername(username);
+      if (loginCredential.email && loginCredential.authentication.password) {
+        const user = this.userService.getUserByEmail(loginCredential.email);
+      } else if (
+        loginCredential.username &&
+        loginCredential.authentication.password
+      ) {
+        const user = this.userService.getUserByUsername(
+          loginCredential.username,
+        );
+      }
+
+      return this.userService.getUserByUsername(loginCredential.username);
     } catch {
       throw new HttpException(
         {
@@ -97,7 +108,7 @@ export class UserController {
   }
 
   // Find a user by email
-  @Get('/:username')
+  @Get('/:email')
   async findUserByEmail(@Param('email') email: string) {
     try {
       return this.userService.getUserByEmail(email);
@@ -112,4 +123,49 @@ export class UserController {
       );
     }
   }
+
+  // Find a user by username
+  @Get('/:username')
+  async findUserByUsername(@Param('username') username: string) {
+    try {
+      return this.userService.getUserByEmail(username);
+    } catch {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'No User found',
+        },
+        HttpStatus.NOT_FOUND,
+        { cause: error },
+      );
+    }
+  }
+}
+
+function authenticateUser(user: User, loginCredential: LoginCredentialDto) {
+  const expectedHash = authentication(
+    user.authentication.salt,
+    loginCredential.authentication.password,
+  );
+
+  if (user.authentication.password !== expectedHash) {
+    throw new HttpException(
+      {
+        status: HttpStatus.UNAUTHORIZED,
+        error: 'Wrong password',
+      },
+      HttpStatus.UNAUTHORIZED,
+      { cause: error },
+    );
+  }
+
+  const salt = random();
+  user.authentication.sessionToken = authentication(salt, user._id.toString());
+
+  // await user.save();
+  // res.cookie('SPEED-AUTH', user.authentication.sessionToken, {
+  //   domain: 'localhost',
+  //   path: '/',
+  // });
+  // return res.status(200).json(user).end();
 }

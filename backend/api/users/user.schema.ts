@@ -12,6 +12,8 @@ export class Authentication {
 
 @Schema()
 export class User {
+  @Prop()
+  _id: string;
   @Prop({ required: true })
   username: string;
   @Prop({ required: true })
