@@ -22,10 +22,14 @@ export class UserService {
   }
 
   async getUserByUsername(username: string): Promise<User> {
-    return await this.userModel.findOne({ username });
+    return await this.userModel
+      .findOne({ username })
+      .select('+authentication.password +authentication.salt');
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    return await this.userModel.findOne({ email });
+    return await this.userModel
+      .findOne({ email })
+      .select('+authentication.password +authentication.salt');
   }
 }

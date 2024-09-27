@@ -80,21 +80,25 @@ export class UserController {
   }
 
   // Login with username
-  @Get('/login')
+  @Post('/login')
   async authenticateUser(@Body() loginCredential: LoginCredentialDto) {
     try {
       let user: User;
+      console.log('In authenticateUser function');
 
       if (loginCredential.identity && loginCredential.password) {
         user = await this.userService.getUserByEmail(loginCredential.identity);
+        console.log('Find user by email result: ' + user);
         if (!user) {
           user = await this.userService.getUserByUsername(
             loginCredential.identity,
           );
+          console.log('Find user by user name: ' + user);
         }
       }
 
       if (user) {
+        console.log('Before checking credential');
         checkCredential(user, loginCredential);
       } else {
         throw new HttpException(
