@@ -19,3 +19,13 @@ export const DefaultEmptyUser: User = {
     authentication: { password: "" },
     role: "",
 };
+
+export type LoginCredential = {
+    identity: string;
+    password?: string;
+};
+
+export const DefaultEmptyLoginCredential: LoginCredential = {
+    identity: "",
+    password: "",
+};

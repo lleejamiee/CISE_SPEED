@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, ReactNode, useState } from "react";
 
 interface AuthenticationContextType {
@@ -8,9 +10,8 @@ interface AuthenticationContextType {
     logout: () => void;
 }
 
-const AuthenticationContext = createContext<AuthenticationContextType | null>(
-    null
-);
+export const AuthenticationContext =
+    createContext<AuthenticationContextType | null>(null);
 
 export const AuthenticationProvider = ({
     children,

@@ -83,18 +83,31 @@ export class UserController {
   @Get('/login')
   async authenticateUser(@Body() loginCredential: LoginCredentialDto) {
     try {
-      if (loginCredential.email && loginCredential.authentication.password) {
-        const user = this.userService.getUserByEmail(loginCredential.email);
-      } else if (
-        loginCredential.username &&
-        loginCredential.authentication.password
-      ) {
-        const user = this.userService.getUserByUsername(
-          loginCredential.username,
+      let user: User;
+
+      if (loginCredential.identity && loginCredential.password) {
+        user = await this.userService.getUserByEmail(loginCredential.identity);
+        if (!user) {
+          user = await this.userService.getUserByUsername(
+            loginCredential.identity,
+          );
+        }
+      }
+
+      if (user) {
+        checkCredential(user, loginCredential);
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'User not found',
+          },
+          HttpStatus.NOT_FOUND,
+          { cause: error },
         );
       }
 
-      return this.userService.getUserByUsername(loginCredential.username);
+      return user;
     } catch {
       throw new HttpException(
         {
@@ -142,10 +155,10 @@ export class UserController {
   }
 }
 
-function authenticateUser(user: User, loginCredential: LoginCredentialDto) {
+function checkCredential(user: User, loginCredential: LoginCredentialDto) {
   const expectedHash = authentication(
     user.authentication.salt,
-    loginCredential.authentication.password,
+    loginCredential.password,
   );
 
   if (user.authentication.password !== expectedHash) {
@@ -159,13 +172,5 @@ function authenticateUser(user: User, loginCredential: LoginCredentialDto) {
     );
   }
 
-  const salt = random();
-  user.authentication.sessionToken = authentication(salt, user._id.toString());
-
-  // await user.save();
-  // res.cookie('SPEED-AUTH', user.authentication.sessionToken, {
-  //   domain: 'localhost',
-  //   path: '/',
-  // });
-  // return res.status(200).json(user).end();
+  return { message: 'User authenticated' };
 }
