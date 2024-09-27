@@ -9,7 +9,12 @@ export function SignIn() {
     const authContext = useContext(AuthenticationContext);
     const navigate = useRouter();
 
-    // const { isLoggedIn, userRole, username, login } = authContext;
+    if (!authContext) {
+        return <div>loading</div>;
+    }
+
+    const { user, login, isLoggedIn } = authContext;
+
     const [loginCredential, setLoginCredential] = useState<LoginCredential>(
         DefaultEmptyLoginCredential
     );
@@ -33,16 +38,31 @@ export function SignIn() {
                 if (res.ok) {
                     return res.json();
                 }
+
+                if (!res.ok) {
+                    window.alert("Invalid login credentials");
+
+                    throw new Error("Invalid credentials");
+                }
+
                 setLoginCredential(DefaultEmptyLoginCredential);
                 navigate.push("/");
             })
             .then((user) => {
-                // isLoggedIn(true)
+                window.alert("Login success");
+
+                login(user);
             })
             .catch((err) => {
                 console.log("Error from login: " + err);
             });
     };
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate.push("/dashboard");
+        }
+    }, [isLoggedIn]);
 
     return (
         <>

@@ -15,3 +15,8 @@ export class LoginCredentialDto {
   identity: string;
   password: string;
 }
+
+export class AuthenticatedUser {
+  username: string;
+  role: string;
+}

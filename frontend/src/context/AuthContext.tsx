@@ -1,12 +1,12 @@
 "use client";
 
+import { User } from "@/type/User";
 import { createContext, ReactNode, useState } from "react";
 
 interface AuthenticationContextType {
     isLoggedIn: boolean;
-    userRole: string;
-    username: string;
-    login: (username: string, role: string) => void;
+    user: User | undefined;
+    login: (user: User) => void;
     logout: () => void;
 }
 
@@ -19,24 +19,21 @@ export const AuthenticationProvider = ({
     children: ReactNode;
 }) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [userRole, setUserRole] = useState<string>("");
-    const [username, setUsername] = useState<string>("");
+    const [user, setUser] = useState<User>();
 
-    const login = (username: string, role: string) => {
+    const login = (user: User) => {
+        setUser(user);
         setIsLoggedIn(true);
-        setUserRole(role);
-        setUsername(username);
     };
 
     const logout = () => {
         setIsLoggedIn(false);
-        setUserRole("");
-        setUsername("");
+        setUser(undefined);
     };
 
     return (
         <AuthenticationContext.Provider
-            value={{ isLoggedIn, userRole, username, login, logout }}
+            value={{ isLoggedIn, user, login, logout }}
         >
             {children}
         </AuthenticationContext.Provider>
