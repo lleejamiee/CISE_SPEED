@@ -8,16 +8,17 @@ import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 export function SignIn() {
     const authContext = useContext(AuthenticationContext);
     const navigate = useRouter();
-
-    if (!authContext) {
-        return <div>loading</div>;
-    }
-
-    const { user, login, isLoggedIn } = authContext;
-
     const [loginCredential, setLoginCredential] = useState<LoginCredential>(
         DefaultEmptyLoginCredential
     );
+
+    const { isLoggedIn, login } = authContext;
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate.push("/dashboard");
+        }
+    }, [isLoggedIn, navigate]);
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         setLoginCredential({
@@ -57,12 +58,6 @@ export function SignIn() {
                 console.log("Error from login: " + err);
             });
     };
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            navigate.push("/dashboard");
-        }
-    }, [isLoggedIn]);
 
     return (
         <>

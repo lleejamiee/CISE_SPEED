@@ -10,8 +10,9 @@ interface AuthenticationContextType {
     logout: () => void;
 }
 
-export const AuthenticationContext =
-    createContext<AuthenticationContextType | null>(null);
+export const AuthenticationContext = createContext<AuthenticationContextType>(
+    {} as AuthenticationContextType
+);
 
 export const AuthenticationProvider = ({
     children,
