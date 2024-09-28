@@ -4,6 +4,10 @@ import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
 
 @Injectable()
+/**
+ * Service to manage article data and business logic.
+ * Provides methods for CRUD operations.
+ */
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
@@ -29,9 +33,9 @@ export class ArticleService {
     return article;
   }
 
-  // Update an article's status
+  // Update an existing article
   async update(id: string, updateData: any): Promise<Article> {
-    // Allow status update if provided
+    // Validate the status before updating
     if (updateData.status && !Object.values(ArticleStatus).includes(updateData.status)) {
       throw new BadRequestException('Invalid status value');
     }
@@ -57,8 +61,8 @@ export class ArticleService {
     return deletedArticle;
   }
 
-  // Retrieve only pending articles
-  async findPending(): Promise<Article[]> {
-    return this.articleModel.find({ status: ArticleStatus.PENDING }).exec();
-  }
+  // Retrieve articles by their statuses
+  async findByStatus(status: ArticleStatus): Promise<Article[]> {
+    return this.articleModel.find({ status }).exec();
+  }  
 }

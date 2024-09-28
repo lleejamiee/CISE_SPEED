@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { ArticleService } from './article.service';
+import { ArticleStatus } from './article.schema';
 
+/**
+ * Controller to handle article-related API requests.
+ * Defines endpoints for CRUD operations on articles.
+ */
 @Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
+
+  // Retrieve articles by status
+  @Get('status')
+  async findByStatus(@Query('status') status: ArticleStatus) {
+    return this.articleService.findByStatus(status);
+  }
 
   // Create a new article
   @Post()
@@ -17,27 +28,22 @@ export class ArticleController {
     return this.articleService.findAll();
   }
 
-  // Retrieve an article by ID
+  // Retrieve article by ID
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.articleService.findOne(id);
   }
 
-  // Update an article's status
+  // Update article by ID
   @Put(':id')
   async updateArticle(@Param('id') id: string, @Body() updateArticleDto: any) {
     return this.articleService.update(id, updateArticleDto);
   }
 
-  // Delete an article by ID
+  // Delete article by ID
   @Delete(':id')
   async deleteArticle(@Param('id') id: string) {
     return this.articleService.delete(id);
   }
 
-  // Retrieve only pending articles
-  @Get('/status/pending')
-  async findPending() {
-    return this.articleService.findPending();
-  }
 }

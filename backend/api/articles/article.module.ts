@@ -4,11 +4,14 @@ import { Article, ArticleSchema } from './article.schema';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 
+/**
+ * ArticleModule encapsulates the functionality related to articles.
+ */
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
   ],
   controllers: [ArticleController],
-  providers: [ArticleService],
+  providers: [ArticleService], 
 })
 export class ArticleModule {}
