@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
-import { Article } from "@/type/Article";
+import { Article, ArticleStatus } from "@/type/Article";
 
 /**
  * Displays a table of articles with 'pending' status.
- * 
+ *
  * @returns Moderation queue component.
  */
 function ModerationQueue() {
@@ -14,7 +14,9 @@ function ModerationQueue() {
 
   // Fetch only pending articles from the backend
   useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + `/articles/status?status=pending`)
+    fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/articles/status?status=pending`
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched data: ", data);
@@ -54,13 +56,13 @@ function ModerationQueue() {
             <tbody>
               {articles.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center">
+                  <td colSpan={9} className="text-center">
                     No articles found.
                   </td>
                 </tr>
               ) : (
-                articles.map((article, index) => (
-                  <tr key={index}>
+                articles.map((article) => (
+                  <tr key={article._id}>
                     <td>{article.title}</td>
                     <td>{article.authors}</td>
                     <td>{article.journal}</td>
@@ -69,7 +71,11 @@ function ModerationQueue() {
                     <td>{article.pubYear}</td>
                     <td>{article.doi}</td>
                     <td>{article.status}</td>
-                    <td>{article.submittedAt ? article.submittedAt.toString() : "N/A"}</td>
+                    <td>
+                      {article.submittedAt
+                        ? new Date(article.submittedAt).toString()
+                        : "N/A"}
+                    </td>
                   </tr>
                 ))
               )}

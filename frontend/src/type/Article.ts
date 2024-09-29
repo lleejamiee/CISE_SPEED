@@ -1,6 +1,12 @@
+export enum ArticleStatus {
+    PENDING = "pending",
+    APPROVED = "approved",
+    REJECTED = "rejected",
+  }
+
 // Represents the structure of an article object
 export type Article = {
-    _id?: string;
+    _id: string;
     title?: string;
     authors?: string;
     journal?: string;
@@ -8,14 +14,14 @@ export type Article = {
     pages?: string;
     pubYear?: number;
     doi?: string;
-    status: "pending" | "approved" | "rejected"; // values for ArticleStatus enum
+    status: ArticleStatus;
     submittedAt?: Date;
 };
 
 // Default structure of article object with initial values
 // This can be used as a template or fallback when creating/handling articles
 export const DefaultEmptyArticle: Article = {
-    _id: undefined,
+    _id: "",
     title: "",
     authors: "",
     journal: "",
@@ -23,6 +29,6 @@ export const DefaultEmptyArticle: Article = {
     pages: "",
     pubYear: 0,
     doi: "",
-    status: "pending", // Default status
+    status: ArticleStatus.PENDING, // Default status
     submittedAt: undefined,
 };

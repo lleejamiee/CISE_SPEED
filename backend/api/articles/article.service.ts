@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
+import { ArticleDTO } from './article.dto';
 
 @Injectable()
 /**
@@ -34,12 +35,7 @@ export class ArticleService {
   }
 
   // Update an existing article
-  async update(id: string, updateData: any): Promise<Article> {
-    // Validate the status before updating
-    if (updateData.status && !Object.values(ArticleStatus).includes(updateData.status)) {
-      throw new BadRequestException('Invalid status value');
-    }
-    
+  async update(id: string, updateData: Partial<ArticleDTO>): Promise<Article> {
     const updatedArticle = await this.articleModel.findByIdAndUpdate(
       id,
       updateData,

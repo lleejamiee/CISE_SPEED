@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { ArticleStatus } from './article.schema';
+import { ArticleDTO } from './article.dto';
 
 /**
  * Controller to handle article-related API requests.
@@ -36,8 +37,8 @@ export class ArticleController {
 
   // Update article by ID
   @Put(':id')
-  async updateArticle(@Param('id') id: string, @Body() updateArticleDto: any) {
-    return this.articleService.update(id, updateArticleDto);
+  async updateArticle(@Param('id') id: string, @Body() updateData: Partial<ArticleDTO>) {
+    return this.articleService.update(id, updateData);
   }
 
   // Delete article by ID
