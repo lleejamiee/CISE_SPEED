@@ -7,7 +7,7 @@ export default function Navbar() {
             <Link href="/home" className={styles.link}>
                 <button className={styles.button}>Dashboard</button>
             </Link>
-            <Link href="/moderationQueue" className={styles.link}>
+            <Link href="/moderation" className={styles.link}>
                 <button className={styles.button}>Moderation Queue</button>
             </Link>
             <Link href="/services" className={styles.link}>
