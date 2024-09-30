@@ -1,5 +1,11 @@
-import DashboardPage from "./dashboard/dashboardPage";
+import { SignIn } from "@/component/authentication/SignIn";
+import { SignUp } from "@/component/authentication/SignUp";
 
 export default function Home() {
-    return <DashboardPage />;
+    return (
+        <>
+            <SignUp />
+            <SignIn />
+        </>
+    );
 }
