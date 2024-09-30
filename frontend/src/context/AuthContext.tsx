@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/type/User";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useState, useContext } from "react";
 
 interface AuthenticationContextType {
     isLoggedIn: boolean;
@@ -39,4 +39,12 @@ export const AuthenticationProvider = ({
             {children}
         </AuthenticationContext.Provider>
     );
+};
+
+export const useAuth = () => {
+    const context = useContext(AuthenticationContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
 };
