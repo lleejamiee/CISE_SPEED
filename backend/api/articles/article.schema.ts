@@ -5,7 +5,8 @@ export type ArticleDocument = HydratedDocument<Article>;
 
 // Enum representing the possible statuses of an article
 export enum ArticleStatus {
-  PENDING = 'pending',
+  PENDING_MODERATION = 'pending_moderation',
+  PENDING_ANALYSIS = 'pending_analysis',
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }
@@ -36,7 +37,7 @@ export class Article {
   @Prop({ required: true })
   doi: string;
 
-  @Prop({ enum: ArticleStatus, default: ArticleStatus.PENDING })
+  @Prop({ enum: ArticleStatus, default: ArticleStatus.PENDING_MODERATION })
   status: ArticleStatus; // Current status of the article
 
   @Prop({ type: Date, default: Date.now })
