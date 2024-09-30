@@ -1,9 +1,9 @@
 "use client";
 
-import Content from "@/components/dashboardContent";
-import Navbar from "@/components/navbar";
 import { AuthenticationContext } from "@/context/AuthContext";
 import { useContext } from "react";
+import Navbar from "./navbar";
+import Content from "./dashboardContent";
 
 export default function Dashboard() {
     const authContext = useContext(AuthenticationContext);
