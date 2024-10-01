@@ -5,6 +5,7 @@ import { Article } from "@/type/Article";
 import SubmissionModal from "../submission/SubmissionModal";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
+import SESearch from "../se-search/SESearch";
 
 /**
  * Dashboard content component for article search and submission.
@@ -71,6 +72,9 @@ export default function Content() {
           + Submit Article
         </Button>
       </div>
+
+      {/* SE Search Dropdown */}
+      <SESearch />
 
       <SubmissionModal 
         isOpen={isModalOpen} 

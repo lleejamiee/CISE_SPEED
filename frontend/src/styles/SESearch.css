@@ -1,0 +1,55 @@
+.se-search-container {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .se-search-title {
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .se-search-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between dropdown and button */
+  }
+  
+  .practice-select {
+    padding: 10px;
+    border: 1px solid #0070f3;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    width: 250px; /* Adjust width to fit your design */
+    cursor: pointer;
+  }
+  
+  .practice-select:focus {
+    outline: none;
+    border-color: #0056b3; /* Darker blue on focus */
+  }
+  
+  .search-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0070f3;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .search-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .results-container {
+    margin-top: 20px;
+  }
+  
