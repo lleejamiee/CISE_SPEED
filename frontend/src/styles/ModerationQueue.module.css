@@ -6,6 +6,7 @@
   padding: 14px;
   height: 100vh;
   overflow-y: auto;
+  align-items: center;
 }
 
 /* Styles for the card elements */
@@ -50,6 +51,21 @@
 /* Card content styles */
 .card-content {
   padding: 16px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+}
+
+/* Styles for content items (authors, journal, etc.) */
+.card-content p {
+  margin: 8px 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Bold styles for key info in card content */
+.card-content p strong {
+  font-weight: 600;
 }
 
 /* Card footer styles */
