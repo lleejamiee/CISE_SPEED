@@ -1,5 +1,5 @@
-import { SignIn } from "@/component/authentication/SignIn";
-import { SignUp } from "@/component/authentication/SignUp";
+import { SignIn } from "@/components/authentication/SignIn";
+import { SignUp } from "@/components/authentication/SignUp";
 
 export default function Home() {
     return (

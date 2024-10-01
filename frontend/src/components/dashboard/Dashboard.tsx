@@ -3,7 +3,7 @@
 import { AuthenticationContext } from "@/context/AuthContext";
 import { useContext } from "react";
 import Navbar from "@/components/navbar";
-import Content from "@/components/dashboardContent";
+import Content from "./dashboardContent";
 
 export default function Dashboard() {
     const authContext = useContext(AuthenticationContext);
