@@ -25,16 +25,16 @@ export class Article {
   @Prop({ required: true })
   journal: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   volume: number;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   pages: string;
 
   @Prop({ required: true })
   pubYear: number;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   doi: string;
 
   @Prop({ enum: ArticleStatus, default: ArticleStatus.PENDING_MODERATION })
