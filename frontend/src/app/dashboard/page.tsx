@@ -1,5 +1,26 @@
-import Dashboard from "@/components/dashboard/Dashboard";
+"use client";
 
-export default function page() {
-    return <Dashboard />;
+import { AuthenticationContext } from "@/context/AuthContext";
+import { useContext } from "react";
+import Navbar from "../../components/navbar/navbar";
+
+export default function Dashboard() {
+    const authContext = useContext(AuthenticationContext);
+
+    if (!authContext) {
+        return <div>loading</div>;
+    }
+
+    const { isLoggedIn, user, logout } = authContext;
+
+    console.log("isLoggedIn: " + isLoggedIn);
+    console.log("User: " + user);
+
+    return (
+        <>
+            <Navbar></Navbar>
+            <div>User role: {user?.role}</div>
+        </>
+    );
 }
+
