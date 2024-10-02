@@ -1,0 +1,31 @@
+.articleTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.articleTable th,
+.articleTable td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.articleTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.articleTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.articleTable tr:hover {
+    background-color: #f1f1f1; /* Highlight on hover */
+}
+
+.noArticles {
+    text-align: center;
+    font-style: italic;
+    color: #888; /* Light gray for no articles message */
+}
