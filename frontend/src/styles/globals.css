@@ -18,6 +18,10 @@
 
 body {
     background: rgb(var(--background-start-rgb));
+    line-height: 1.5;
+    color: #000;
+    background-color: #fff;
+    margin: 8px;
 }
 
 @layer utilities {
@@ -81,14 +85,6 @@ body {
         --chart-5: 340 75% 55%; 
     } 
 
-    * {
-        @apply border-border;
-    }
-  
-    body {
-        @apply bg-background text-foreground p-4;
-    }
-
     button {
         @apply border border-border p-1 mt-2 mb-2 mr-1 bg-gray-100;
     }
@@ -102,13 +98,14 @@ body {
     }
 
     h2 {
-        @apply text-3xl font-semibold text-primary mt-5 mb-3;
+        @apply text-2xl font-semibold text-primary mt-5 mb-3;
     }
 
     h3 {
-        @apply text-2xl font-medium text-muted-foreground mt-4 mb-2;
+        @apply text-xl font-medium text-muted-foreground mt-4 mb-2;
     }
     a {
         @apply text-blue-600 underline hover:text-blue-800;
     }
+
 }

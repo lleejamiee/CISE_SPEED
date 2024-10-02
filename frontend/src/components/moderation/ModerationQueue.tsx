@@ -94,12 +94,17 @@ function ModerationQueue() {
                   : "N/A"}
               </CardDescription>
               <CardContent className={styles.cardContent}>
-                <div>
+                <div className={styles.gridContainer}>
                   <p>
-                    <strong>Authors:</strong> {article.authors}
+                    <strong>Authors:</strong>
+                  </p>
+                  <p>{article.authors}</p>
+
+                  <p>
+                    <strong>Journal:</strong>
                   </p>
                   <p>
-                    <strong>Journal:</strong> {article.journal}{" "}
+                    {article.journal}{" "}
                     {article.pages
                       ? article.pages.includes("-")
                         ? `, pp. ${article.pages}`
@@ -108,10 +113,14 @@ function ModerationQueue() {
                   </p>
 
                   <p>
-                    <strong>Publication Year:</strong> {article.pubYear}
+                    <strong>Publication Year:</strong>
+                  </p>
+                  <p>{article.pubYear}</p>
+
+                  <p>
+                    <strong>DOI:</strong>
                   </p>
                   <p>
-                    <strong>DOI:</strong>{" "}
                     {article.doi ? article.doi : "Not provided"}
                   </p>
                 </div>

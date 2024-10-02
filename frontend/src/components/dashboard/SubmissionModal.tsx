@@ -15,7 +15,7 @@ interface SubmissionModalProps {
 
 /**
  * SubmissionModal component for article submission
- */ 
+ */
 const SubmissionModal: React.FC<SubmissionModalProps> = ({
   isOpen,
   onClose,
@@ -106,7 +106,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
           borderRadius: "8px",
           width: "500px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          position: "relative", 
+          position: "relative",
         }}
       >
         <button
@@ -119,7 +119,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
             border: "none",
             cursor: "pointer",
             fontSize: "20px",
-            color: "#333", 
+            color: "#333",
           }}
         >
           &times;
@@ -133,19 +133,25 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
         >
           New Submission
         </h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Title:</label>
-            <Input
-              type="text"
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Authors:</label>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 3fr",
+            gap: "10px",
+          }}
+        >
+          <label>Title:</label>
+          <Input
+            type="text"
+            name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+
+          <label>Authors:</label>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {authors.map((author, index) => (
               <div
                 key={index}
@@ -160,7 +166,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
                   name={`author${index}`}
                   value={author}
                   onChange={(e) => handleAuthorChange(index, e.target.value)}
-                  required={index === 0} // Make only the first author required
+                  required={index === 0}
                 />
                 {index > 0 && (
                   <Button
@@ -176,99 +182,86 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
             <Button
               variant="outline"
               onClick={handleAddAuthor}
-              style={{ marginTop: "5px" }}
+              style={{ marginTop: "5px", width: "120px" }}
               disabled={!authors[0]}
             >
               + Add another author
             </Button>
           </div>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Journal:</label>
-            <Input
-              type="text"
-              name="journal"
-              value={journal}
-              onChange={(e) => setJournal(e.target.value)}
-              required
-            />
-          </div>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Publication Year:</label>
-            <select
-              style={{
-                border: "1px solid #cbd5e1",
-                borderRadius: "5px",
-                padding: "8px",
-                margin: "5px",
-                width: "150px",
-              }}
-              value={year}
-              onChange={(e) => setYear(Number(e.target.value))}
-              required
-            >
-              <option value="">Select a year</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Volume:</label>
+
+          <label>Journal:</label>
+          <Input
+            type="text"
+            name="journal"
+            value={journal}
+            onChange={(e) => setJournal(e.target.value)}
+            required
+          />
+
+          <label>Publication Year:</label>
+          <select
+            style={{
+              border: "1px solid #d3d3d3",
+              borderRadius: "4px",
+              padding: "8px",
+              width: "100%",
+            }}
+            value={year}
+            onChange={(e) => setYear(Number(e.target.value))}
+            required
+          >
+            <option value="">Select a year</option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+
+          <label>Volume:</label>
+          <Input
+            type="number"
+            name="volume"
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
+          />
+
+          <label>Pages:</label>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <Input
               type="number"
-              name="volume"
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
+              name="startPage"
+              value={startPage}
+              onChange={(e) => setStartPage(Number(e.target.value) || "")}
+              style={{ width: "100px" }}
             />
-          </div>
-          <div
-            style={{
-              marginBottom: "10px",
-              display: "flex",
-              flexDirection: "column", // Change to column layout
-              alignItems: "flex-start", // Align items to the start
-            }}
-          >
-            <label>Pages:</label>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Input
-                type="number"
-                name="startPage"
-                value={startPage}
-                onChange={(e) => setStartPage(Number(e.target.value) || "")}
-                style={{ width: "100px" }}
-              />
-              <span style={{ margin: "0 10px" }}>-</span>
-              <Input
-                type="number"
-                name="endPage"
-                value={endPage}
-                onChange={(e) => setEndPage(Number(e.target.value) || "")}
-                style={{ width: "100px" }}
-              />
-            </div>
-          </div>
-          <div style={{ marginBottom: "40px" }}>
-            <label>DOI:</label>
+            <span style={{ margin: "0 10px" }}>-</span>
             <Input
-              type="text"
-              name="doi"
-              value={doi}
-              onChange={(e) => setDoi(e.target.value)}
+              type="number"
+              name="endPage"
+              value={endPage}
+              onChange={(e) => setEndPage(Number(e.target.value) || "")}
+              style={{ width: "100px" }}
             />
           </div>
+
+          <label>DOI:</label>
+          <Input
+            type="text"
+            name="doi"
+            value={doi}
+            onChange={(e) => setDoi(e.target.value)}
+          />
+
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               width: "100%",
+              gridColumn: "span 2", // Make this span both columns
             }}
           >
-            <Button onClick={onClose}>
-              Cancel
-            </Button>
+            <Button onClick={onClose}>Cancel</Button>
             <Button
               style={{ backgroundColor: "green", color: "white" }}
               variant="outline"

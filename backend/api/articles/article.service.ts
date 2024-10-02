@@ -65,10 +65,10 @@ export class ArticleService {
     status: ArticleStatus,
     sortOrder: 'asc' | 'desc',
   ): Promise<Article[]> {
-    const sortDirection = sortOrder === 'asc' ? 1 : -1; // 1 for ascending, -1 for descending
+    const sortDirection = sortOrder === 'asc' ? 1 : -1; // 1 for asc, -1 for desc
     return this.articleModel
       .find({ status })
-      .sort({ submittedAt: sortDirection }) // Use the sort direction based on the input
+      .sort({ submittedAt: sortDirection })
       .exec();
   }
 }

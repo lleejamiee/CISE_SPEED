@@ -38,10 +38,10 @@ export class Article {
   doi: string;
 
   @Prop({ enum: ArticleStatus, default: ArticleStatus.PENDING_MODERATION })
-  status: ArticleStatus; // Current status of the article
+  status: ArticleStatus;
 
   @Prop({ type: Date, default: Date.now })
-  submittedAt: Date; // Date of submission
+  submittedAt: Date;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
