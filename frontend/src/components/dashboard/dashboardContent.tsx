@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
  * 
  * @returns The rendered Content component.
  */
-export default function Content() {
+export default function DashboardContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
 
