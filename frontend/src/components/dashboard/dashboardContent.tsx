@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 import { Article } from "@/type/Article";
-import SubmissionModal from "../submission/SubmissionModal";
+import SubmissionModal from "./SubmissionModal";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 /**
- * Dashboard content component for article search and submission.
+ * DashboardContent component for article search and submission.
  * 
  * Featurs a button to open a submission modal and handle 
  * new article submissions.
  * 
  * @returns The rendered Content component.
  */
-export default function Content() {
+export default function DashboardContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
 
@@ -65,7 +65,6 @@ export default function Content() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "20px" }}>
         <h1>Dashboard</h1>
         <Button 
-          variant="outline"
           onClick={openModal}
         >
           + Submit Article

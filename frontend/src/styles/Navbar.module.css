@@ -26,6 +26,6 @@
     box-sizing: border-box;
 }
 
-.link:not(:last-child) {
+/* .link:not(:last-child) {
     border-right: 2px solid #000;
-}
+} */
