@@ -266,7 +266,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
               width: "100%",
             }}
           >
-            <Button variant="outline" onClick={onClose}>
+            <Button onClick={onClose}>
               Cancel
             </Button>
             <Button

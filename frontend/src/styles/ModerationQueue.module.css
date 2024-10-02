@@ -1,0 +1,76 @@
+/* Styles for ModerationQueue component */
+.moderationQueueContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 14px;
+  height: 100vh;
+  overflow-y: auto;
+  align-items: center;
+}
+
+/* Styles for the card elements */
+.card {
+  width: 100%;
+  max-width: 600px;
+  margin: 10px 0;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+/* Hover effect for cards */
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Card header styles */
+.card-header {
+  border-bottom: 1px solid #eaeaea;
+  padding: 16px;
+  background-color: #f9f9f9;
+}
+
+/* Card title styles */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Card description styles */
+.card-description {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Card content styles */
+.card-content {
+  padding: 16px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+}
+
+/* Styles for content items (authors, journal, etc.) */
+.card-content p {
+  margin: 8px 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Bold styles for key info in card content */
+.card-content p strong {
+  font-weight: 600;
+}
+
+/* Card footer styles */
+.card-footer {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eaeaea;
+}

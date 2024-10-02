@@ -1,5 +1,33 @@
-/* @layer base {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 255, 255, 255;
+    --background-end-rgb: 255, 255, 255; 
+}
+
+@media (prefers-color-scheme: dark) {
     :root {
+        --foreground-rgb: 0, 0, 0; 
+        --background-start-rgb: 255, 255, 255; 
+        --background-end-rgb: 255, 255, 255; 
+    }
+}
+
+body {
+    background: rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+@layer base {
+  :root {
         --background: 0 0% 100%;
         --foreground: 222.2 84% 4.9%;
         --card: 0 0% 100%;
@@ -24,9 +52,9 @@
         --chart-3: 197 37% 24%;
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
-        --radius: 0.5rem;
+        --radius: 0.5rem; 
     }
-    .dark {
+  .dark {
         --background: 222.2 84% 4.9%;
         --foreground: 210 40% 98%;
         --card: 222.2 84% 4.9%;
@@ -50,6 +78,37 @@
         --chart-2: 160 60% 45%;
         --chart-3: 30 80% 55%;
         --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
+        --chart-5: 340 75% 55%; 
+    } 
+
+    * {
+        @apply border-border;
     }
-} */
+  
+    body {
+        @apply bg-background text-foreground p-4;
+    }
+
+    button {
+        @apply border border-border p-1 mt-2 mb-2 mr-1 bg-gray-100;
+    }
+
+    input {
+        @apply border border-border p-1 mt-2 mb-2 mr-1;
+    }
+
+    h1 {
+        @apply text-4xl font-bold text-primary mt-6 mb-4;
+    }
+
+    h2 {
+        @apply text-3xl font-semibold text-primary mt-5 mb-3;
+    }
+
+    h3 {
+        @apply text-2xl font-medium text-muted-foreground mt-4 mb-2;
+    }
+    a {
+        @apply text-blue-600 underline hover:text-blue-800;
+    }
+}

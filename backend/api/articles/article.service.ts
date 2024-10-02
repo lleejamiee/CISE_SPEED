@@ -36,11 +36,9 @@ export class ArticleService {
 
   // Update an existing article
   async update(id: string, updateData: Partial<ArticleDTO>): Promise<Article> {
-    const updatedArticle = await this.articleModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true },
-    ).exec();
+    const updatedArticle = await this.articleModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
     
     if (!updatedArticle) {
       throw new NotFoundException(`Article with ID ${id} not found`);
@@ -61,4 +59,16 @@ export class ArticleService {
   async findByStatus(status: ArticleStatus): Promise<Article[]> {
     return this.articleModel.find({ status }).exec();
   }  
+
+  // Retrieve articles by their statuses, sorted by submission date
+  async findByStatusOrdered(
+    status: ArticleStatus,
+    sortOrder: 'asc' | 'desc',
+  ): Promise<Article[]> {
+    const sortDirection = sortOrder === 'asc' ? 1 : -1; // 1 for ascending, -1 for descending
+    return this.articleModel
+      .find({ status })
+      .sort({ submittedAt: sortDirection }) // Use the sort direction based on the input
+      .exec();
+  }
 }
