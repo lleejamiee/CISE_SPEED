@@ -72,68 +72,68 @@ function ModerationQueue() {
 
   return (
     <div className={styles.moderationContainer}>
-      <div className={styles.moderationQueue}>
-        {error ? (
-          <div className="text-center">
-            <p>{error}</p>
-          </div>
-        ) : articles.length === 0 ? (
-          <div className="text-center">
-            <p>No articles found.</p>
-          </div>
-        ) : (
-          articles.map((article) => (
-            <Card
-              key={article._id}
-              className={`${styles.card}`}
-              onClick={() => setSelectedArticle(article)} // Set the selected article when clicked
-            >
-              <CardHeader>
-                <CardTitle className={styles.cardTitle}>
-                  {article.title}
-                </CardTitle>
-                <CardDescription>
-                  Submitted:{" "}
-                  {article.submittedAt
-                    ? formatSubmissionDate(new Date(article.submittedAt))
-                    : "N/A"}
-                </CardDescription>
-                <CardContent>
-                  <div className={styles.gridContainer}>
-                    <p>
-                      <b>Authors:</b>
-                    </p>
-                    <p>{article.authors}</p>
+      <div style={{ overflowY: 'auto'}}>
+        <h2 className={styles.moderationHeader}>Moderation Queue</h2>
+        <div className={styles.moderationQueue}>
+          {error ? (
+            <div className="text-center">
+              <p>{error}</p>
+            </div>
+          ) : articles.length === 0 ? (
+            <div className="text-center">
+              <p>No articles found.</p>
+            </div>
+          ) : (
+            articles.map((article) => (
+              <Card
+                key={article._id}
+                className={`${styles.card}`}
+                onClick={() => setSelectedArticle(article)} // Set the selected article when clicked
+              >
+                <CardHeader>
+                  <CardTitle className={styles.cardTitle}>
+                    <p>{article.title}</p>
+                  </CardTitle>
+                  <CardDescription>
+                    Submitted:{" "}
+                    {article.submittedAt
+                      ? formatSubmissionDate(new Date(article.submittedAt))
+                      : "N/A"}
+                  </CardDescription>
+                  <CardContent className="p-0 m-0">
+                    <div className={styles.cardContent}>
+                      <p>
+                        <b>Authors: </b>
+                        {article.authors}
+                      </p>
 
-                    <p>
-                      <b>Journal:</b>
-                    </p>
-                    <p>
-                      {article.journal}{" "}
-                      {article.pages
-                        ? article.pages.includes("-")
-                          ? `, pp. ${article.pages}`
-                          : `, p. ${article.pages}`
-                        : ""}
-                    </p>
+                      <p>
+                        <b>Journal: </b>
+                        {article.journal}{" "}
+                        {article.pages
+                          ? article.pages.includes("-")
+                            ? `, pp. ${article.pages}`
+                            : `, p. ${article.pages}`
+                          : ""}
+                      </p>
 
-                    <p>
-                      <b>Publication Year:</b>
-                    </p>
-                    <p>{article.pubYear}</p>
+                      <p>
+                        <b>Publication Year: </b>
+                        {article.pubYear}
+                      </p>
 
-                    <p>
-                      <b>DOI:</b>
-                    </p>
-                    <p>{article.doi ? article.doi : "Not provided"}</p>
-                  </div>
-                </CardContent>
-              </CardHeader>
-            </Card>
-          ))
-        )}
+                      <p>
+                        <b>DOI: </b>
+                        {article.doi ? article.doi : "Not provided"}
+                      </p>
+                    </div>
+                  </CardContent>
+                </CardHeader>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
-
       <div className={styles.moderationReview}>
         {selectedArticle ? (
           <ModerationReviewCard article={selectedArticle} />

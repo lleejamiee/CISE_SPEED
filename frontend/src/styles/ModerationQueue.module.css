@@ -5,32 +5,42 @@
   padding: 0px;
   display: grid;
   grid-template-columns: auto 2fr;
-  gap: 20px;
+  gap: 0px;
   overflow: hidden;
 }
 
+/* Header styles */
+.moderationHeader {
+  grid-column: 1 / span 1; 
+  background-color: #fff; 
+  z-index: 1; 
+  top: 0;
+  position: sticky;
+  text-align: center;
+  padding: 10px;
+  margin: 0px;
+}
+
 .moderationQueue {
-  display: flex;
   flex: 1;
-  flex-direction: column;
-  width: 100%;
-  padding: 14px;
+  padding: 10px;
   overflow-y: auto;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .moderationReview {
   height: 100vh;
   padding: 20px;
   background-color: #f9f9f9;
-  overflow: hidden;
+  overflow-y: hidden;
 }
 
 .card {
   width: 100%;
-  max-width: 400px;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  min-width: 300px;
+  max-width: 300px;
+  margin-bottom: 2rem;
   padding: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.1s;
@@ -43,19 +53,17 @@
 
 .cardTitle {
   height: 20px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   margin: 0;
 }
 
-.gridContainer {
-  display: grid;
-  grid-template-columns: 120px 200px;
-  gap: 2px;
+.cardTitle p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
 }
 
-.gridContainer p {
+.cardContent p {
   height: 20px;
   white-space: nowrap;
   overflow: hidden;
