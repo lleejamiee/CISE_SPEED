@@ -4,7 +4,7 @@
   height: 100vh;
   padding: 0px;
   display: grid;
-  grid-template-columns: auto 2fr;
+  grid-template-columns: auto 1fr;
   gap: 0px;
   overflow: hidden;
 }
@@ -38,8 +38,7 @@
 
 .card {
   width: 100%;
-  min-width: 300px;
-  max-width: 300px;
+  width: 300px;
   margin-bottom: 2rem;
   padding: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

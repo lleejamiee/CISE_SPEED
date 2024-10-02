@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Article } from "@/type/Article";
+import { Article, ArticleStatus } from "@/type/Article";
 import {
   Card,
   CardHeader,
@@ -11,6 +11,7 @@ import {
 } from "../ui/card";
 import ModerationReviewCard from "./ModerationReview";
 import styles from "../../styles/ModerationQueue.module.css";
+import { useToast } from "@/hooks/use-toast";
 
 /**
  * Displays a list of articles with 'pending' status using Card components.
@@ -21,26 +22,54 @@ function ModerationQueue() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null); // To track the selected article
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   // Fetch only pending articles from the backend in ascending order
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/status/ordered?status=pending_moderation`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setArticles(data);
-      } catch (err) {
-        setError("Failed to load articles.");
+  const fetchArticles = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/status/ordered?status=pending_moderation`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    };
+      const data = await response.json();
+      setArticles(data);
+    } catch (err) {
+      setError("Failed to load articles.");
+    }
+  };
 
+  useEffect(() => {
     fetchArticles();
   }, []);
+
+
+  // Changes status of an article in the database
+  const handleStatusChange = (id: string, status: ArticleStatus) => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to update article status.");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setSelectedArticle(null);
+        fetchArticles();
+        toast({ title: `Article status updated to ${status}.` });
+      })
+      .catch((error) => {
+        toast({ title: `Failed to update article status.` });
+        setError("Failed to update article status.");
+      });
+  };
 
   // Helper function to format the submission date
   const formatSubmissionDate = (submittedDate: Date) => {
@@ -72,7 +101,7 @@ function ModerationQueue() {
 
   return (
     <div className={styles.moderationContainer}>
-      <div style={{ overflowY: 'auto'}}>
+      <div style={{ overflowY: "auto" }}>
         <h2 className={styles.moderationHeader}>Moderation Queue</h2>
         <div className={styles.moderationQueue}>
           {error ? (
@@ -88,7 +117,7 @@ function ModerationQueue() {
               <Card
                 key={article._id}
                 className={`${styles.card}`}
-                onClick={() => setSelectedArticle(article)} // Set the selected article when clicked
+                onClick={() => setSelectedArticle(article)}
               >
                 <CardHeader>
                   <CardTitle className={styles.cardTitle}>
@@ -136,7 +165,10 @@ function ModerationQueue() {
       </div>
       <div className={styles.moderationReview}>
         {selectedArticle ? (
-          <ModerationReviewCard article={selectedArticle} />
+          <ModerationReviewCard
+            article={selectedArticle}
+            onStatusChange={handleStatusChange}
+          />
         ) : (
           <p className="text-center">Select an article to review</p>
         )}

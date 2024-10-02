@@ -1,5 +1,5 @@
 import React from "react";
-import { Article } from "@/type/Article";
+import { Article, ArticleStatus } from "@/type/Article";
 import {
   Card,
   CardHeader,
@@ -10,9 +10,9 @@ import {
 import { Button } from "../ui/button";
 import styles from "../../styles/ModerationReview.module.css";
 
-
 interface ModerationReviewCardProps {
   article: Article;
+  onStatusChange: (id: string, status: ArticleStatus) => void;
 }
 
 /**
@@ -23,7 +23,16 @@ interface ModerationReviewCardProps {
  */
 const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
   article,
+  onStatusChange,
 }) => {
+  const handleReject = () => {
+    onStatusChange(article._id, ArticleStatus.REJECTED);
+  };
+
+  const handleApprove = () => {
+    onStatusChange(article._id, ArticleStatus.APPROVED);
+  };
+
   return (
     <Card className={`${styles.card}`}>
       <CardHeader>
@@ -53,8 +62,10 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
       </CardContent>
 
       <CardFooter>
-        <Button variant={"destructive"}>Reject</Button>
-        <Button style={{ backgroundColor: "green", color: "white" }}>
+        <Button variant={"destructive"} onClick={handleReject}>
+          Reject
+        </Button>
+        <Button style={{ backgroundColor: "green", color: "white" }} onClick={handleApprove}>
           Approve
         </Button>
       </CardFooter>
