@@ -1,5 +1,12 @@
-import Navbar from "@/component/dashboard/navbar";
+import Navbar from "@/components/navbar/navbar";
 
 export default function moderationPage() {
-    return <Navbar></Navbar>;
+    return (
+        <div>
+            <Navbar />
+            <main>
+                <h1>Moderation Page</h1>
+            </main>
+        </div>
+    );
 }
