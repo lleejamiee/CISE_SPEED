@@ -15,7 +15,7 @@ interface SubmissionModalProps {
 
 /**
  * SubmissionModal component for article submission
- */
+ */ 
 const SubmissionModal: React.FC<SubmissionModalProps> = ({
   isOpen,
   onClose,
@@ -58,7 +58,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const pages = endPage ? `${startPage}-${endPage}` : `${startPage}`;
+    const pages = `${startPage}-${endPage}`;
 
     const newArticle: Omit<Article, "_id" | "submittedAt" | "status"> = {
       title,
@@ -106,7 +106,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
           borderRadius: "8px",
           width: "500px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          position: "relative",
+          position: "relative", 
         }}
       >
         <button
@@ -119,7 +119,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
             border: "none",
             cursor: "pointer",
             fontSize: "20px",
-            color: "#333",
+            color: "#333", 
           }}
         >
           &times;
@@ -227,8 +227,8 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
             style={{
               marginBottom: "10px",
               display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
+              flexDirection: "column", // Change to column layout
+              alignItems: "flex-start", // Align items to the start
             }}
           >
             <label>Pages:</label>
