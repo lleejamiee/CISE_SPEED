@@ -8,13 +8,13 @@ export enum ArticleStatus {
 // Represents the structure of an article object
 export type Article = {
   _id: string;
-  title?: string;
+  title: string;
   authors?: string;
   journal?: string;
   volume?: number;
   pages?: string;
   pubYear?: number;
-  doi?: string;
+  doi: string;
   status: ArticleStatus;
   submittedAt?: Date;
 };

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
@@ -39,7 +43,7 @@ export class ArticleService {
     const updatedArticle = await this.articleModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
-    
+
     if (!updatedArticle) {
       throw new NotFoundException(`Article with ID ${id} not found`);
     }
@@ -58,7 +62,7 @@ export class ArticleService {
   // Retrieve articles by their statuses
   async findByStatus(status: ArticleStatus): Promise<Article[]> {
     return this.articleModel.find({ status }).exec();
-  }  
+  }
 
   // Retrieve articles by their statuses, sorted by submission date
   async findByStatusOrdered(
@@ -70,5 +74,37 @@ export class ArticleService {
       .find({ status })
       .sort({ submittedAt: sortDirection })
       .exec();
+  }
+
+  // Check for duplicates based on title
+  async checkForDuplicates(title: string): Promise<Article[]> {
+    // Normalize the title
+    const normalizedTitle = title.trim().toLowerCase().replace(/\s+/g, '');
+
+    // Log the normalized title
+    console.log('Normalized Title:', normalizedTitle);
+
+    const regexPattern = normalizedTitle.split('').join('\\s*');
+
+    console.log('Regex Pattern:', regexPattern);
+
+    // Use regex for a case-insensitive match and filter by status
+    const duplicates = await this.articleModel
+      .find({
+        title: { $regex: new RegExp(regexPattern, 'i') },
+        status: {
+          $in: [
+            ArticleStatus.PENDING_ANALYSIS,
+            ArticleStatus.APPROVED,
+            ArticleStatus.REJECTED,
+          ],
+        },
+      })
+      .exec();
+
+    // Log duplicates found
+    console.log('Duplicates Found:', duplicates);
+
+    return duplicates;
   }
 }

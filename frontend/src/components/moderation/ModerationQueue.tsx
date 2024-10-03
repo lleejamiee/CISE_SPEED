@@ -44,7 +44,6 @@ function ModerationQueue() {
     fetchArticles();
   }, []);
 
-
   // Changes status of an article in the database
   const handleStatusChange = (id: string, status: ArticleStatus) => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${id}`, {
@@ -170,7 +169,9 @@ function ModerationQueue() {
             onStatusChange={handleStatusChange}
           />
         ) : (
-          <p className="text-center">Select an article to review</p>
+          <p style={{ marginTop: "20px" }} className="text-center">
+            Select an article to review
+          </p>
         )}
       </div>
     </div>
