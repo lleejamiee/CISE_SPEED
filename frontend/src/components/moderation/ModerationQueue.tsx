@@ -72,6 +72,25 @@ function ModerationQueue() {
             });
     };
 
+    // Handle article deletion
+    const handleDelete = (id: string) => {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${id}`, {
+            method: "DELETE",
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting article.");
+                }
+                setSelectedArticle(null);
+                toast({ title: "Article deleted successfully." });
+                fetchArticles();
+            })
+            .catch((error) => {
+                console.error("Deletion error:", error);
+                toast({ title: "Failed to delete article." });
+            });
+    };
+
     // Helper function to format the submission date
     const formatSubmissionDate = (submittedDate: Date) => {
         const now = new Date();
@@ -181,6 +200,7 @@ function ModerationQueue() {
                     <ModerationReviewCard
                         article={selectedArticle}
                         onStatusChange={handleStatusChange}
+                        onDelete={handleDelete} // Pass the delete handler
                     />
                 ) : (
                     <p style={{ marginTop: "20px" }} className="text-center">
