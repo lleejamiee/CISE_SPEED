@@ -5,6 +5,7 @@ import { Article } from "@/type/Article";
 import SubmissionModal from "./SubmissionModal";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
+import ArticleList from "./articleList";
 
 /**
  * DashboardContent component for article search and submission.
@@ -81,6 +82,7 @@ export default function DashboardContent() {
                 onClose={closeModal}
                 onSubmit={handleNewArticleSubmission}
             />
+            <ArticleList></ArticleList>
         </div>
     );
 }
