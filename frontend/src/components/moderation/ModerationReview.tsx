@@ -166,7 +166,9 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
                                     {duplicates.map((dup) => (
                                         <tr key={dup._id}>
                                             <td>
-                                                <strong>"{dup.title}"</strong>
+                                                <strong>
+                                                    &quot{dup.title}&quot
+                                                </strong>
                                             </td>
                                             <td>
                                                 {dup.authors || "Not provided"}
