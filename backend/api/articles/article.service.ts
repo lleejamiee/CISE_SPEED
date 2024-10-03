@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
@@ -39,7 +43,7 @@ export class ArticleService {
     const updatedArticle = await this.articleModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
-    
+
     if (!updatedArticle) {
       throw new NotFoundException(`Article with ID ${id} not found`);
     }
@@ -58,7 +62,7 @@ export class ArticleService {
   // Retrieve articles by their statuses
   async findByStatus(status: ArticleStatus): Promise<Article[]> {
     return this.articleModel.find({ status }).exec();
-  }  
+  }
 
   // Retrieve articles by their statuses, sorted by submission date
   async findByStatusOrdered(
@@ -70,5 +74,31 @@ export class ArticleService {
       .find({ status })
       .sort({ submittedAt: sortDirection })
       .exec();
+  }
+
+  // Check for duplicate articles based on title or DOI
+  async checkForDuplicates(title: string, doi: string): Promise<Article[]> {
+    const normalizedTitle = title.trim().toLowerCase().replace(/\s+/g, '');
+    const regexPattern = normalizedTitle.split('').join('\\s*');
+    const query: any = {
+      status: {
+        $in: [
+          ArticleStatus.PENDING_ANALYSIS,
+          ArticleStatus.APPROVED,
+          ArticleStatus.REJECTED,
+        ],
+      },
+    };
+
+    query.title = { $regex: new RegExp(regexPattern, 'i') };
+
+    // Add DOI check if it's not an empty string
+    if (doi && doi.trim() !== '') {
+      query.doi = doi;
+    }
+
+    const duplicates = await this.articleModel.find(query).exec();
+
+    return duplicates;
   }
 }

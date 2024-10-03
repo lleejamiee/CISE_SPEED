@@ -20,6 +20,16 @@ import { ArticleDTO } from './article.dto';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  // Check for duplicate articles based on title or DOI
+  @Get('duplicates')
+  async checkForDuplicates(
+    @Query('title') title: string,
+    @Query('doi') doi: string,
+  ) {
+    const duplicates = await this.articleService.checkForDuplicates(title, doi);
+    return duplicates;
+  }
+
   // Retrieve articles by status
   @Get('status')
   async findByStatus(@Query('status') status: ArticleStatus) {

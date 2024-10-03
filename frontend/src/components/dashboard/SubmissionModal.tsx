@@ -258,7 +258,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
               display: "flex",
               justifyContent: "space-between",
               width: "100%",
-              gridColumn: "span 2", // Make this span both columns
+              gridColumn: "span 2",
             }}
           >
             <Button onClick={onClose}>Cancel</Button>
