@@ -9,10 +9,12 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import styles from "../../styles/ModerationReview.module.css";
+import { toast } from "@/hooks/use-toast";
 
 interface ModerationReviewCardProps {
   article: Article;
   onStatusChange: (id: string, status: ArticleStatus) => void;
+  onDelete: (id: string) => void; // Adjusted to accept the article ID
 }
 
 /**
@@ -22,15 +24,18 @@ interface ModerationReviewCardProps {
  *
  * @param article - The selected article for review.
  * @param onStatusChange - Function to change the article status.
+ * @param onDelete - Function to delete the article.
  *
  * @returns ModerationReviewCard component.
  */
 const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
   article,
   onStatusChange,
+  onDelete,
 }) => {
   const [isRelevant, setIsRelevant] = useState(false);
   const [isPeerReviewed, setIsPeerReviewed] = useState(false);
+  const [isDuplicateConfirmed, setIsDuplicateConfirmed] = useState(false); // State for duplicate confirmation
   const [buttonText, setButtonText] = useState("Search for duplicates");
   const [duplicates, setDuplicates] = useState<Article[]>([]);
   const [showDuplicates, setShowDuplicates] = useState(false);
@@ -38,6 +43,7 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
   useEffect(() => {
     setIsRelevant(false);
     setIsPeerReviewed(false);
+    setIsDuplicateConfirmed(false); // Reset on new article
     setButtonText("Search for duplicates");
     setDuplicates([]);
     setShowDuplicates(false);
@@ -45,12 +51,20 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
 
   // Handle article rejection
   const handleReject = () => {
-    onStatusChange(article._id, ArticleStatus.REJECTED);
+    if (isDuplicateConfirmed) {
+      onDelete(article._id);
+      toast({ title: `Article deleted as a confirmed duplicate.` });
+    } else {
+
+      onStatusChange(article._id, ArticleStatus.REJECTED);
+      toast({ title: `Article status updated to rejected.` });
+    }
   };
 
   // Handle article approval
   const handleApprove = () => {
     onStatusChange(article._id, ArticleStatus.PENDING_ANALYSIS);
+    toast({ title: `Article status updated to pending analysis.` });
   };
 
   // Search for duplicate titles or doi's from the database
@@ -156,6 +170,17 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
                   ))}
                 </tbody>
               </table>
+              <div style={{ marginTop: "10px" }}>
+                <input
+                  type="checkbox"
+                  id="isDuplicateConfirmed"
+                  checked={isDuplicateConfirmed}
+                  onChange={() => setIsDuplicateConfirmed(!isDuplicateConfirmed)} // Manage state
+                />
+                <label htmlFor="isDuplicateConfirmed" style={{ marginLeft: "0.5rem" }}>
+                  Is this article a duplicate?
+                </label>
+              </div>
               <button
                 onClick={() => setShowDuplicates(false)}
                 className={styles.closeButton}
