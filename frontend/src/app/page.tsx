@@ -1,11 +1,17 @@
-import { SignIn } from "@/component/authentication/SignIn";
-import { SignUp } from "@/component/authentication/SignUp";
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
 
 export default function Home() {
     return (
-        <>
-            <SignUp />
-            <SignIn />
-        </>
+        <div>
+            <main>
+                <h1>Welcome to SPEED</h1>
+                <p>
+                    Please <Link href="/login">Log In</Link> to continue.
+                </p>
+            </main>
+        </div>
     );
 }
