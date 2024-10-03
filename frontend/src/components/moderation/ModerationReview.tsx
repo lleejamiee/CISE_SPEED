@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { Article, ArticleStatus } from "@/type/Article";
 import {
@@ -17,6 +15,16 @@ interface ModerationReviewCardProps {
   onStatusChange: (id: string, status: ArticleStatus) => void;
 }
 
+/**
+ * Component for reviewing an article in the moderation queue.
+ * Displays article details, allows moderators to check for duplicates,
+ * mark relevance, and approve or reject the submission.
+ *
+ * @param article - The selected article for review.
+ * @param onStatusChange - Function to change the article status.
+ *
+ * @returns ModerationReviewCard component.
+ */
 const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
   article,
   onStatusChange,
@@ -24,27 +32,36 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
   const [isRelevant, setIsRelevant] = useState(false);
   const [isPeerReviewed, setIsPeerReviewed] = useState(false);
   const [buttonText, setButtonText] = useState("Search for duplicates");
+  const [duplicates, setDuplicates] = useState<Article[]>([]);
+  const [showDuplicates, setShowDuplicates] = useState(false);
 
   useEffect(() => {
     setIsRelevant(false);
     setIsPeerReviewed(false);
     setButtonText("Search for duplicates");
+    setDuplicates([]);
+    setShowDuplicates(false);
   }, [article]);
 
+  // Handle article rejection
   const handleReject = () => {
     onStatusChange(article._id, ArticleStatus.REJECTED);
   };
 
+  // Handle article approval
   const handleApprove = () => {
     onStatusChange(article._id, ArticleStatus.PENDING_ANALYSIS);
   };
 
+  // Search for duplicate titles or doi's from the database
   const searchForDuplicates = () => {
-    setButtonText("Searching..."); // Update button text during loading
+    setButtonText("Searching...");
 
     const titleParam = encodeURIComponent(article.title.trim().toLowerCase());
-    console.log("titleParam: " + titleParam);
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/duplicates?title=${titleParam}`;
+    const doiParam = encodeURIComponent(article.doi.trim());
+    console.log("titleParam: ", titleParam, ",doi: ", doiParam);
+
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/duplicates?title=${titleParam}&doi=${doiParam}`;
 
     fetch(url, { method: "GET" })
       .then((response) => {
@@ -56,9 +73,12 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
       })
       .then((data) => {
         if (data.length > 0) {
-          setButtonText("Possible duplicate found");
+          setDuplicates(data);
+          setShowDuplicates(true);
+          setButtonText("Possible duplicates found");
         } else {
           setButtonText("No duplicates found");
+          setShowDuplicates(false);
         }
       })
       .catch((error) => {
@@ -98,9 +118,53 @@ const ModerationReviewCard: React.FC<ModerationReviewCardProps> = ({
       <div className={styles.reviewWrapper}>
         <CardContent>
           <h3>Review</h3>
-          <Button variant="link" onClick={searchForDuplicates}>
+          <Button
+            variant="link"
+            onClick={searchForDuplicates}
+            className={`${styles.searchButton} ${
+              buttonText !== "Search for duplicates"
+                ? duplicates.length > 0
+                  ? styles.duplicateFound
+                  : styles.noDuplicatesFound
+                : ""
+            }`}
+          >
             {buttonText}
           </Button>
+
+          {showDuplicates && duplicates.length > 0 && (
+            <div className={styles.duplicatesPopup}>
+              <table className={styles.duplicatesTable}>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Authors</th>
+                    <th>Status</th>
+                    <th>DOI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {duplicates.map((dup) => (
+                    <tr key={dup._id}>
+                      <td>
+                        <strong>"{dup.title}"</strong>
+                      </td>
+                      <td>{dup.authors || "Not provided"}</td>
+                      <td>{dup.status}</td>
+                      <td>{dup.doi || "Not provided"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button
+                onClick={() => setShowDuplicates(false)}
+                className={styles.closeButton}
+              >
+                Close
+              </button>
+            </div>
+          )}
+
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <input
               type="checkbox"

@@ -20,10 +20,13 @@ import { ArticleDTO } from './article.dto';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  // Check for duplicates based on title
+  // Check for duplicate articles based on title or DOI
   @Get('duplicates')
-  async checkForDuplicates(@Query('title') title: string) {
-    const duplicates = await this.articleService.checkForDuplicates(title);
+  async checkForDuplicates(
+    @Query('title') title: string,
+    @Query('doi') doi: string,
+  ) {
+    const duplicates = await this.articleService.checkForDuplicates(title, doi);
     return duplicates;
   }
 
@@ -41,8 +44,6 @@ export class ArticleController {
   ) {
     return this.articleService.findByStatusOrdered(status, sortOrder);
   }
-
-  
 
   // Create a new article
   @Post()

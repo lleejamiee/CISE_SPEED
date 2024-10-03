@@ -76,34 +76,28 @@ export class ArticleService {
       .exec();
   }
 
-  // Check for duplicates based on title
-  async checkForDuplicates(title: string): Promise<Article[]> {
-    // Normalize the title
+  // Check for duplicate articles based on title or DOI
+  async checkForDuplicates(title: string, doi: string): Promise<Article[]> {
     const normalizedTitle = title.trim().toLowerCase().replace(/\s+/g, '');
-
-    // Log the normalized title
-    console.log('Normalized Title:', normalizedTitle);
-
     const regexPattern = normalizedTitle.split('').join('\\s*');
+    const query: any = {
+      status: {
+        $in: [
+          ArticleStatus.PENDING_ANALYSIS,
+          ArticleStatus.APPROVED,
+          ArticleStatus.REJECTED,
+        ],
+      },
+    };
 
-    console.log('Regex Pattern:', regexPattern);
+    query.title = { $regex: new RegExp(regexPattern, 'i') };
 
-    // Use regex for a case-insensitive match and filter by status
-    const duplicates = await this.articleModel
-      .find({
-        title: { $regex: new RegExp(regexPattern, 'i') },
-        status: {
-          $in: [
-            ArticleStatus.PENDING_ANALYSIS,
-            ArticleStatus.APPROVED,
-            ArticleStatus.REJECTED,
-          ],
-        },
-      })
-      .exec();
+    // Add DOI check if it's not an empty string
+    if (doi && doi.trim() !== '') {
+      query.doi = doi;
+    }
 
-    // Log duplicates found
-    console.log('Duplicates Found:', duplicates);
+    const duplicates = await this.articleModel.find(query).exec();
 
     return duplicates;
   }
