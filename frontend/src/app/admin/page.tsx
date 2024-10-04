@@ -1,8 +1,8 @@
-"use client"; // Make this a Client Component
+"use client"; 
 
 import Navbar from "@/components/navbar/navbar";
 import { useEffect, useState } from "react";
-import styles from './AdminPage.module.css'; // Importing CSS module for styling
+import styles from './AdminPage.module.css'; 
 
 export default function AdminPage() {
     const [articles, setArticles] = useState([]);
@@ -11,7 +11,7 @@ export default function AdminPage() {
     // Fetch articles from the backend
     const fetchArticles = async () => {
         try {
-            const response = await fetch("/api/articles"); // INCORRECT ENDPOINT
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/articles`);
             const data = await response.json();
             console.log("Fetched articles:", data); // Log the fetched articles
             setArticles(data);
