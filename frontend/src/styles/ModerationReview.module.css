@@ -1,0 +1,104 @@
+/* ModerationReview styles */
+.card {
+  width: 100%;
+  min-width: 500px;
+  padding: 0px;
+}
+
+.reviewWrapper {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px;
+}
+
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.duplicatesPopup {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.duplicatesTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.duplicatesTable th,
+.duplicatesTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.duplicatesTable th {
+  background-color: #f2f2f2;
+}
+
+.duplicatesTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+.duplicatesPopup h4 {
+  margin: 0 0 5px 0;
+}
+
+.duplicatesPopup ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.duplicatesPopup li {
+  margin: 5px 0;
+}
+
+.closeButton {
+  background-color: transparent;
+  border: none;
+  color: #0070f3;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.closeButton:hover {
+  text-decoration: underline;
+}
+
+.searchButton {
+}
+
+.duplicateFound {
+  border: 2px solid red;
+  background-color: #ffcccc;
+  color: red;
+}
+
+.noDuplicatesFound {
+  border: 2px solid green;
+  background-color: #ccffcc;
+  color: green;
+}

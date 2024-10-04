@@ -11,6 +11,6 @@ export class ArticleDTO {
   volume: string;
   pages: string;
   doi: string;
-  status: ArticleStatus; // defaults to ArticleStatus.PENDING
+  status: ArticleStatus; // defaults to ArticleStatus.PENDING_MODERATION
   submittedAt: Date;
 }

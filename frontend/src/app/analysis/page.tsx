@@ -1,3 +1,4 @@
+import AnalysisQueue from "@/components/analysis/AnalysisQueue";
 import Navbar from "@/components/navbar/navbar";
 
 export default function analysisPage() {
@@ -5,7 +6,7 @@ export default function analysisPage() {
         <div>
             <Navbar />
             <main>
-                <h1>Analysis Page</h1>
+                <AnalysisQueue />
             </main>
         </div>
     );

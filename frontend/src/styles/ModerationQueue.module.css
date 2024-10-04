@@ -1,0 +1,74 @@
+/* ModerationQueue styles */
+.moderationContainer {
+  width: 100%;
+  height: 100vh;
+  padding: 0px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0px;
+  overflow: hidden;
+}
+
+.moderationHeader {
+  grid-column: 1 / span 1;
+  background-color: #fff;
+  z-index: 1;
+  top: 0;
+  position: sticky;
+  text-align: center;
+  padding: 10px;
+  margin: 0px;
+}
+
+.moderationQueue {
+  width: auto;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.moderationReview {
+  height: 100%;
+  min-height: 100vh;
+  padding-top: 0;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+}
+
+.card {
+  width: 100%;
+  width: 300px;
+  margin-bottom: 2rem;
+  padding: 0px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.cardTitle {
+  height: 20px;
+  margin: 0;
+}
+
+.cardTitle p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
+}
+
+.cardContent p {
+  height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
