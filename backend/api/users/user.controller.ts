@@ -13,7 +13,7 @@ import { CreateUserDto, LoginCredentialDto } from './user.dto';
 import { authentication, random } from 'utilities/encryption';
 import { User } from './user.schema';
 
-@Controller('api/users')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get('/test')
