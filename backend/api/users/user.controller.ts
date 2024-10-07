@@ -16,10 +16,6 @@ import { User } from './user.schema';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Get('/test')
-  test() {
-    return this.userService.test();
-  }
 
   // Create & add a user
   @Post('/')
