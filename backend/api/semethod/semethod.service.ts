@@ -75,7 +75,7 @@ export class SeMethodService {
     if (!seMethod) {
       throw new NotFoundException(`SeMethod with ID ${seMethodId} not found`);
     }
-    return seMethod.claims; // Return claims array
+    return seMethod.claims;
   }
 
   // Retrieve a single claim
@@ -104,7 +104,7 @@ export class SeMethodService {
     if (!seMethod.claims[claimIndex]) {
       throw new NotFoundException(`Claim not found at index ${claimIndex}`);
     }
-    seMethod.claims[claimIndex] = claimDto; // Update the claim
+    seMethod.claims[claimIndex] = claimDto;
     return seMethod.save();
   }
 
@@ -117,7 +117,7 @@ export class SeMethodService {
     if (!seMethod.claims[claimIndex]) {
       throw new NotFoundException(`Claim not found at index ${claimIndex}`);
     }
-    seMethod.claims.splice(claimIndex, 1); // Remove the claim
+    seMethod.claims.splice(claimIndex, 1);
     return seMethod.save();
   }
 }

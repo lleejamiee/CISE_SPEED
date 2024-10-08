@@ -58,7 +58,7 @@ export class Article {
   @Prop({ type: String, required: false })
   claim: string;
 
-  @Prop({ enum: Evidence, default: "", required: false})
+  @Prop({ enum: Evidence, required: false})
   evidence: Evidence;
 }
 
