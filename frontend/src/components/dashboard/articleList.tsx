@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Article } from "@/type/Article"; // Adjust the import as needed
-import { useToast } from "@/hooks/use-toast"; // Assuming you are using this for notifications
+import { Article } from "@/type/Article";
+import { useToast } from "@/hooks/use-toast";
 import styles from "../../styles/articleList.module.css";
 
 /**
@@ -73,6 +73,8 @@ function ArticleList() {
                             <th>Journal</th>
                             <th>Publication Year</th>
                             <th>DOI</th>
+                            <th>Claim</th>
+                            <th>Evidence</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +85,8 @@ function ArticleList() {
                                 <td>{article.journal}</td>
                                 <td>{article.pubYear}</td>
                                 <td>{article.doi || "Not provided"}</td>
+                                <td>{article.claim}</td>
+                                <td>{article.evidence}</td>
                             </tr>
                         ))}
                     </tbody>
