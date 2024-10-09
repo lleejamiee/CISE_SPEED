@@ -101,4 +101,13 @@ export class ArticleService {
 
     return duplicates;
   }
+
+  // Adds the rating to the list of ratings and updates the average
+  async addRating(articleId: string, rating: number) {
+    const article = await this.articleModel.findById(articleId);
+    if (rating >= 0 && rating <= 5) {
+      article.ratings.push(rating);
+      await article.save();
+    }
+  }
 }
