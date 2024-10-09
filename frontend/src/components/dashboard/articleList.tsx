@@ -31,6 +31,7 @@ function ArticleList() {
             }
             const data = await response.json();
             setArticles(data);
+            setFilteredArticles(data);
         } catch (err) {
             setError("Failed to load articles.");
             toast({ title: "Failed to load articles." });
@@ -118,7 +119,6 @@ function ArticleList() {
               });
 
         setFilteredArticles(filteredArticles);
-        setArticles(filteredArticles);
 
         console.log("articles in filterBySEClaim: :");
         filteredArticles.map((article) => {
