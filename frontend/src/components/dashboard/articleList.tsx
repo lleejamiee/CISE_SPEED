@@ -21,6 +21,7 @@ function ArticleList() {
 
     const { toast } = useToast();
 
+    // Fetch approved articles from database
     const fetchApprovedArticles = async () => {
         try {
             const response = await fetch(
@@ -38,6 +39,7 @@ function ArticleList() {
         }
     };
 
+    // Fetch SE Methods from database
     const fetchSeMethods = async () => {
         try {
             const response = await fetch(
@@ -62,7 +64,6 @@ function ArticleList() {
 
     useEffect(() => {
         fetchApprovedArticles();
-        initialFilter();
         fetchSeMethods();
 
         console.log("first useEffect: ");
@@ -74,8 +75,8 @@ function ArticleList() {
     useEffect(() => {
         if (articles.length > 0) {
             console.log("HEREEEE");
-            if (selectedClaim || selectedSeMethodId) {
-                filterBySEorClaim();
+            if (selectedClaim || selectedSeMethodId || searchTerm) {
+                filterArticles();
             } else {
                 fetchApprovedArticles();
             }
@@ -83,14 +84,15 @@ function ArticleList() {
 
         console.log("SE id: " + selectedSeMethodId);
         console.log("Claim: " + selectedClaim);
+        console.log("Search Term: " + searchTerm);
         console.log("articles in useEffect: :");
         articles.map((article) => {
             console.log(article.title);
         });
-    }, [selectedSeMethodId, selectedClaim]);
+    }, [searchTerm, selectedSeMethodId, selectedClaim, articles]);
 
-    //filtered list
-    const initialFilter = () => {
+    // Filter articles by author/title, SE method and claim
+    const filterArticles = () => {
         const filteredArticles = articles.filter((article) => {
             const titleMatch = article.title
                 .toLowerCase()
@@ -98,32 +100,19 @@ function ArticleList() {
             const authorMatch =
                 article.authors
                     ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) || false; // Use optional chaining here
-            return titleMatch || authorMatch;
+                    .includes(searchTerm.toLowerCase()) || false;
+
+            const seMethodMatch = selectedSeMethodId
+                ? article.seMethod === selectedSeMethodId
+                : true;
+            const claimMatch = selectedClaim
+                ? article.claim === selectedClaim
+                : true;
+
+            return (titleMatch || authorMatch) && seMethodMatch && claimMatch;
         });
 
         setFilteredArticles(filteredArticles);
-    };
-
-    // Filtering articles by SE Method & Claim
-    const filterBySEorClaim = () => {
-        const filteredArticles = selectedClaim
-            ? articles.filter((article) => {
-                  return (
-                      article.seMethod === selectedSeMethodId &&
-                      article.claim === selectedClaim
-                  );
-              })
-            : articles.filter((article) => {
-                  return article.seMethod === selectedSeMethodId;
-              });
-
-        setFilteredArticles(filteredArticles);
-
-        console.log("articles in filterBySEClaim: :");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     };
 
     return (
