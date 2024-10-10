@@ -17,9 +17,16 @@ function ArticleList() {
     const [seMethods, setSeMethods] = useState<SeMethod[]>([]);
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
     const [selectedClaim, setSelectedClaim] = useState<string>("");
+    const [selectedPubYear, setSelectedPubYear] = useState<number>();
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
 
     const { toast } = useToast();
+
+    // Generate array of years from 1900 to current year
+    const years = Array.from(
+        { length: new Date().getFullYear() - 1900 + 1 },
+        (_, i) => 1900 + i
+    ).reverse();
 
     // Fetch approved articles from database
     const fetchApprovedArticles = async () => {
@@ -75,7 +82,12 @@ function ArticleList() {
     useEffect(() => {
         if (articles.length > 0) {
             console.log("HEREEEE");
-            if (selectedClaim || selectedSeMethodId || searchTerm) {
+            if (
+                selectedClaim ||
+                selectedSeMethodId ||
+                searchTerm ||
+                selectedPubYear
+            ) {
                 filterArticles();
             } else {
                 fetchApprovedArticles();
@@ -89,9 +101,15 @@ function ArticleList() {
         articles.map((article) => {
             console.log(article.title);
         });
-    }, [searchTerm, selectedSeMethodId, selectedClaim, articles]);
+    }, [
+        searchTerm,
+        selectedSeMethodId,
+        selectedClaim,
+        selectedPubYear,
+        articles,
+    ]);
 
-    // Filter articles by author/title, SE method and claim
+    // Filter articles by author/title, SE method, claim, and pub year
     const filterArticles = () => {
         const filteredArticles = articles.filter((article) => {
             const titleMatch = article.title
@@ -108,8 +126,16 @@ function ArticleList() {
             const claimMatch = selectedClaim
                 ? article.claim === selectedClaim
                 : true;
+            const pubYearMatch = selectedPubYear
+                ? article.pubYear === selectedPubYear
+                : true;
 
-            return (titleMatch || authorMatch) && seMethodMatch && claimMatch;
+            return (
+                (titleMatch || authorMatch) &&
+                seMethodMatch &&
+                claimMatch &&
+                pubYearMatch
+            );
         });
 
         setFilteredArticles(filteredArticles);
@@ -182,6 +208,33 @@ function ArticleList() {
                     </select>
                 </div>
             )}
+            <div>
+                <label htmlFor="pubYearSelect" style={{ marginRight: "8px" }}>
+                    Select Publication Year:
+                </label>
+                <select
+                    id="pubYearSelect"
+                    onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setSelectedPubYear(value);
+                    }}
+                    style={{
+                        border: "1px solid #d3d3d3",
+                        borderRadius: "4px",
+                        padding: "8px",
+                        width: "100%",
+                        marginBottom: "16px",
+                    }}
+                    value={selectedPubYear}
+                >
+                    <option value="">-- Select Publication Year --</option>
+                    {years.map((year) => (
+                        <option key={year} value={year}>
+                            {year}
+                        </option>
+                    ))}
+                </select>
+            </div>
             {error ? (
                 <div className="text-center">
                     <p>{error}</p>
