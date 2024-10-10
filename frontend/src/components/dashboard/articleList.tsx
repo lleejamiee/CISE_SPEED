@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Article } from "@/type/Article";
 import { useToast } from "@/hooks/use-toast";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
+import { AuthenticationContext } from "@/context/AuthContext";
 
 /**
  *
@@ -18,6 +19,9 @@ function ArticleList() {
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
     const [selectedClaim, setSelectedClaim] = useState<string>("");
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+    const [toDelete, setToDelete] = useState<Article>();
+    const authContext = useContext(AuthenticationContext);
+    const { user } = authContext;
 
     const { toast } = useToast();
 
@@ -74,7 +78,9 @@ function ArticleList() {
     useEffect(() => {
         if (articles.length > 0) {
             console.log("HEREEEE");
-            if (selectedClaim || selectedSeMethodId) {
+            if (toDelete) {
+                fetchApprovedArticles();
+            } else if (selectedClaim || selectedSeMethodId) {
                 filterBySEorClaim();
             } else {
                 fetchApprovedArticles();
@@ -87,7 +93,7 @@ function ArticleList() {
         articles.map((article) => {
             console.log(article.title);
         });
-    }, [selectedSeMethodId, selectedClaim]);
+    }, [selectedSeMethodId, selectedClaim, toDelete]);
 
     //filtered list
     const initialFilter = () => {
@@ -124,6 +130,36 @@ function ArticleList() {
         filteredArticles.map((article) => {
             console.log(article.title);
         });
+    };
+
+    const removeArticle = async (article: Article) => {
+        setToDelete(article);
+        if (window.confirm("Delete article " + article.title + "?")) {
+            fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${article._id}`,
+                {
+                    method: "DELETE",
+                }
+            )
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Error deleting article.");
+                    }
+                    console.log("To delete: " + toDelete);
+                    setToDelete(undefined);
+                    console.log("To delete after: " + toDelete);
+                    fetchApprovedArticles();
+                    initialFilter();
+
+                    toast({ title: "Article deleted successfully." });
+                })
+                .catch((error) => {
+                    console.error("Deletion error:", error);
+                    toast({ title: "Failed to delete article." });
+                });
+        } else {
+            setToDelete(undefined);
+        }
     };
 
     return (
@@ -212,6 +248,7 @@ function ArticleList() {
                             <th>DOI</th>
                             <th>Claim</th>
                             <th>Evidence</th>
+                            {user?.role === "admin" && <th>Delete</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -224,6 +261,17 @@ function ArticleList() {
                                 <td>{article.doi || "Not provided"}</td>
                                 <td>{article.claim}</td>
                                 <td>{article.evidence}</td>
+                                {user?.role === "admin" && (
+                                    <td>
+                                        <button
+                                            onClick={() =>
+                                                removeArticle(article)
+                                            }
+                                        >
+                                            delete
+                                        </button>
+                                    </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>
