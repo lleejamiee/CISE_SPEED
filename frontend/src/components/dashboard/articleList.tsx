@@ -68,31 +68,18 @@ function ArticleList() {
         fetchApprovedArticles();
         initialFilter();
         fetchSeMethods();
-
-        console.log("first useEffect: ");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     }, []);
 
     useEffect(() => {
         if (articles.length > 0) {
-            console.log("HEREEEE");
             if (toDelete) {
-                fetchApprovedArticles();
+                removeArticle();
             } else if (selectedClaim || selectedSeMethodId) {
                 filterBySEorClaim();
             } else {
                 fetchApprovedArticles();
             }
         }
-
-        console.log("SE id: " + selectedSeMethodId);
-        console.log("Claim: " + selectedClaim);
-        console.log("articles in useEffect: :");
-        articles.map((article) => {
-            console.log(article.title);
-        });
     }, [selectedSeMethodId, selectedClaim, toDelete]);
 
     //filtered list
@@ -125,18 +112,15 @@ function ArticleList() {
               });
 
         setFilteredArticles(filteredArticles);
-
-        console.log("articles in filterBySEClaim: :");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     };
 
-    const removeArticle = async (article: Article) => {
-        setToDelete(article);
-        if (window.confirm("Delete article " + article.title + "?")) {
+    const removeArticle = async () => {
+        if (
+            toDelete &&
+            window.confirm("Delete article " + toDelete.title + "?")
+        ) {
             fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${article._id}`,
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${toDelete._id}`,
                 {
                     method: "DELETE",
                 }
@@ -145,9 +129,7 @@ function ArticleList() {
                     if (!response.ok) {
                         throw new Error("Error deleting article.");
                     }
-                    console.log("To delete: " + toDelete);
                     setToDelete(undefined);
-                    console.log("To delete after: " + toDelete);
                     fetchApprovedArticles();
                     initialFilter();
 
@@ -264,9 +246,7 @@ function ArticleList() {
                                 {user?.role === "admin" && (
                                     <td>
                                         <button
-                                            onClick={() =>
-                                                removeArticle(article)
-                                            }
+                                            onClick={() => setToDelete(article)}
                                         >
                                             delete
                                         </button>
