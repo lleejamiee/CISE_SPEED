@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Article } from "@/type/Article";
 import { useToast } from "@/hooks/use-toast";
+import useDebounce from "@/hooks/use-debounce";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
 
@@ -13,11 +14,14 @@ import { Claim, SeMethod } from "@/type/SeMethod";
 function ArticleList() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const debouncedSearchTerm = useDebounce(searchTerm, 500);
     const [error, setError] = useState<string | null>(null);
     const [seMethods, setSeMethods] = useState<SeMethod[]>([]);
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
     const [selectedClaim, setSelectedClaim] = useState<string>("");
-    const [selectedPubYear, setSelectedPubYear] = useState<number>();
+    const [selectedPubYear, setSelectedPubYear] = useState<number | undefined>(
+        undefined
+    );
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
 
     const { toast } = useToast();
@@ -40,6 +44,7 @@ function ArticleList() {
             const data = await response.json();
             setArticles(data);
             setFilteredArticles(data);
+            console.log("Fetched articles: " + data.length);
         } catch (err) {
             setError("Failed to load articles.");
             toast({ title: "Failed to load articles." });
@@ -73,52 +78,36 @@ function ArticleList() {
         fetchApprovedArticles();
         fetchSeMethods();
 
-        console.log("first useEffect: ");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
+        console.log("--First useEffect--");
     }, []);
 
     useEffect(() => {
         if (articles.length > 0) {
-            console.log("HEREEEE");
-            if (
-                selectedClaim ||
-                selectedSeMethodId ||
-                searchTerm ||
-                selectedPubYear
-            ) {
-                filterArticles();
-            } else {
-                fetchApprovedArticles();
-            }
+            console.log("--HEREEEE--");
+            filterArticles();
         }
 
         console.log("SE id: " + selectedSeMethodId);
         console.log("Claim: " + selectedClaim);
         console.log("Search Term: " + searchTerm);
-        console.log("articles in useEffect: :");
-        articles.map((article) => {
-            console.log(article.title);
-        });
+        console.log("Pub Year: " + selectedPubYear);
     }, [
-        searchTerm,
+        articles,
+        debouncedSearchTerm,
         selectedSeMethodId,
         selectedClaim,
         selectedPubYear,
-        articles,
     ]);
 
     // Filter articles by author/title, SE method, claim, and pub year
-    const filterArticles = () => {
-        const filteredArticles = articles.filter((article) => {
+    const filterArticles = useCallback(() => {
+        const filtered = articles.filter((article) => {
             const titleMatch = article.title
                 .toLowerCase()
-                .includes(searchTerm.toLowerCase());
-            const authorMatch =
-                article.authors
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) || false;
+                .includes(debouncedSearchTerm.toLowerCase());
+            const authorMatch = article.authors
+                ?.toLowerCase()
+                .includes(debouncedSearchTerm.toLowerCase()) || false;
 
             const seMethodMatch = selectedSeMethodId
                 ? article.seMethod === selectedSeMethodId
@@ -138,18 +127,22 @@ function ArticleList() {
             );
         });
 
-        setFilteredArticles(filteredArticles);
-    };
+        setFilteredArticles(filtered);
+        console.log("Filtered Articles: " + filtered.length);
+    }, [
+        articles,
+        debouncedSearchTerm,
+        selectedSeMethodId,
+        selectedClaim,
+        selectedPubYear,
+    ]);
 
     return (
         <div className={styles.approvedArticlesContainer}>
             <div className={styles.filterContainer}>
                 <h2>Filter Articles</h2>
                 <div>
-                    <label
-                        htmlFor="authorTitleSearch"
-                        className={styles.label}
-                    >
+                    <label htmlFor="authorTitleSearch" className={styles.label}>
                         Title or Author:
                     </label>
                     <input
@@ -163,16 +156,16 @@ function ArticleList() {
                 </div>
                 <div className={styles.rowContainer}>
                     <div style={{ flex: 1, marginRight: "8px" }}>
-                        <label
-                            htmlFor="pubYearSelect"
-                            className={styles.label}
-                        >
+                        <label htmlFor="pubYearSelect" className={styles.label}>
                             Publication Year:
                         </label>
                         <select
                             id="pubYearSelect"
                             onChange={(e) => {
-                                const value = parseInt(e.target.value);
+                                const value =
+                                    e.target.value === ""
+                                        ? undefined
+                                        : parseInt(e.target.value);
                                 setSelectedPubYear(value);
                             }}
                             className={styles.selectBox}
@@ -190,7 +183,7 @@ function ArticleList() {
                     </div>
                     <div style={{ flex: 1, marginRight: "8px" }}>
                         <label
-                            htmlFor="claimSelect"
+                            htmlFor="seMethodSelect"
                             className={styles.label}
                         >
                             SE Method:
