@@ -143,98 +143,118 @@ function ArticleList() {
 
     return (
         <div className={styles.approvedArticlesContainer}>
-            <h2 className={styles.header}>Approved Articles</h2>
-            <input
-                type="text"
-                placeholder="Search by title or author"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchBar}
-            />
-            <label htmlFor="claimSelect" style={{ marginRight: "8px" }}>
-                Select SE Method:
-            </label>
-            <select
-                id="seMethodSelect"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    setSelectedSeMethodId(value);
-                    setSelectedClaim("");
-                }}
-                style={{
-                    border: "1px solid #d3d3d3",
-                    borderRadius: "4px",
-                    padding: "8px",
-                    width: "100%",
-                    marginBottom: "16px",
-                }}
-                value={selectedSeMethodId}
-            >
-                <option value="">-- Select SE Method --</option>
-                {seMethods.map((method) => (
-                    <option key={method._id} value={method._id}>
-                        {method.name}
-                    </option>
-                ))}
-            </select>
-            {selectedSeMethodId && (
+            <div className={styles.filterContainer}>
+                <h2>Filter Articles</h2>
                 <div>
-                    <label htmlFor="claimSelect" style={{ marginRight: "8px" }}>
-                        Select Claim:
-                    </label>
-                    <select
-                        id="claimSelect"
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setSelectedClaim(value);
-                        }}
-                        style={{
-                            border: "1px solid #d3d3d3",
-                            borderRadius: "4px",
-                            padding: "8px",
-                            width: "100%",
-                            marginBottom: "16px",
-                        }}
-                        value={selectedClaim}
+                    <label
+                        htmlFor="authorTitleSearch"
+                        className={styles.label}
                     >
-                        <option value="">-- Select Claim --</option>
-                        {seMethods
-                            .find((method) => method._id === selectedSeMethodId)
-                            ?.claims.map((claim: Claim, index: number) => (
-                                <option key={index} value={claim.name}>
-                                    {claim.name}
+                        Title or Author:
+                    </label>
+                    <input
+                        id="authorTitleSearch"
+                        type="text"
+                        placeholder="Search by title or author"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchBar}
+                    />
+                </div>
+                <div className={styles.rowContainer}>
+                    <div style={{ flex: 1, marginRight: "8px" }}>
+                        <label
+                            htmlFor="pubYearSelect"
+                            className={styles.label}
+                        >
+                            Publication Year:
+                        </label>
+                        <select
+                            id="pubYearSelect"
+                            onChange={(e) => {
+                                const value = parseInt(e.target.value);
+                                setSelectedPubYear(value);
+                            }}
+                            className={styles.selectBox}
+                            value={selectedPubYear}
+                        >
+                            <option value="">
+                                -- Select Publication Year --
+                            </option>
+                            {years.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
                                 </option>
                             ))}
-                    </select>
+                        </select>
+                    </div>
+                    <div style={{ flex: 1, marginRight: "8px" }}>
+                        <label
+                            htmlFor="claimSelect"
+                            className={styles.label}
+                        >
+                            SE Method:
+                        </label>
+                        <select
+                            id="seMethodSelect"
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setSelectedSeMethodId(value);
+                                setSelectedClaim("");
+                            }}
+                            className={styles.selectBox}
+                            value={selectedSeMethodId}
+                        >
+                            <option value="">-- Select SE Method --</option>
+                            {seMethods.map((method) => (
+                                <option key={method._id} value={method._id}>
+                                    {method.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        {selectedSeMethodId && (
+                            <div>
+                                <label
+                                    htmlFor="claimSelect"
+                                    className={styles.label}
+                                >
+                                    Select Claim:
+                                </label>
+                                <select
+                                    id="claimSelect"
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setSelectedClaim(value);
+                                    }}
+                                    className={styles.selectBox}
+                                    value={selectedClaim}
+                                >
+                                    <option value="">-- Select Claim --</option>
+                                    {seMethods
+                                        .find(
+                                            (method) =>
+                                                method._id ===
+                                                selectedSeMethodId
+                                        )
+                                        ?.claims.map(
+                                            (claim: Claim, index: number) => (
+                                                <option
+                                                    key={index}
+                                                    value={claim.name}
+                                                >
+                                                    {claim.name}
+                                                </option>
+                                            )
+                                        )}
+                                </select>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            )}
-            <div>
-                <label htmlFor="pubYearSelect" style={{ marginRight: "8px" }}>
-                    Select Publication Year:
-                </label>
-                <select
-                    id="pubYearSelect"
-                    onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        setSelectedPubYear(value);
-                    }}
-                    style={{
-                        border: "1px solid #d3d3d3",
-                        borderRadius: "4px",
-                        padding: "8px",
-                        width: "100%",
-                        marginBottom: "16px",
-                    }}
-                    value={selectedPubYear}
-                >
-                    <option value="">-- Select Publication Year --</option>
-                    {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
-                    ))}
-                </select>
             </div>
+            <h2 className={styles.header}>Approved Articles</h2>
             {error ? (
                 <div className="text-center">
                     <p>{error}</p>
