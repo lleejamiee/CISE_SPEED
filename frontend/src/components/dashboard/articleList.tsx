@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Article } from "@/type/Article"; // Adjust the import as needed
 import { useToast } from "@/hooks/use-toast"; // Assuming you are using this for notifications
+import StarRatingComponent from "react-star-rating-component";
 import styles from "../../styles/articleList.module.css";
 
 /**
@@ -34,6 +35,13 @@ function ArticleList() {
     useEffect(() => {
         fetchApprovedArticles();
     }, []);
+
+    // Helper function to calculate the average rating
+    const calculateAverageRating = (ratings: number[]): number => {
+        if (!ratings || ratings.length === 0) return 0;
+        const sum = ratings.reduce((a, b) => a + b, 0);
+        return sum / ratings.length;
+    };
 
     //filtered list
     const filteredArticles = articles.filter((article) => {
@@ -73,6 +81,7 @@ function ArticleList() {
                             <th>Journal</th>
                             <th>Publication Year</th>
                             <th>DOI</th>
+                            <th>Rating</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +92,14 @@ function ArticleList() {
                                 <td>{article.journal}</td>
                                 <td>{article.pubYear}</td>
                                 <td>{article.doi || "Not provided"}</td>
+                                <td>
+                                    <StarRatingComponent
+                                        name={`rating-${article._id}`}
+                                        starCount={5}
+                                        value={calculateAverageRating(article.ratings ?? [])}
+                                        editing={false} // Prevents user from changing rating
+                                    />
+                                </td>
                             </tr>
                         ))}
                     </tbody>

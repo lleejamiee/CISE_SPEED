@@ -4,9 +4,10 @@
   },
   "scripts": {
     "frontend": "npm run dev --prefix ./frontend",
-    "backend": "npm start --prefix ./backend", 
+    "backend": "npm start --prefix ./backend",
     "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "dependencies": {
+    "react-star-rating-component": "^1.4.1"
   }
 }
-  
-
