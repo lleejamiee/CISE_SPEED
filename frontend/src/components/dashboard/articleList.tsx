@@ -54,6 +54,36 @@ function ArticleList() {
         return titleMatch || authorMatch;
     });
 
+    const handleRatingSubmit = async (articleId: string, newRating: number) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${articleId}/rate`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ rating: newRating }),
+                }
+            );
+            if (!response.ok) {
+                throw new Error('Failed to submit rating.');
+            }
+    
+            const updatedArticle = await response.json();
+            setArticles((prevArticles) =>
+                prevArticles.map((article) =>
+                    article._id === updatedArticle._id ? updatedArticle : article
+                )
+            );
+            toast({ title: 'Rating submitted successfully!' });
+        } catch (err) {
+            toast({ title: 'Failed to submit rating.' });
+        }
+    };
+    
+    
+
     return (
         <div className={styles.approvedArticlesContainer}>
             <h2 className={styles.header}>Approved Articles</h2>
@@ -97,7 +127,10 @@ function ArticleList() {
                                         name={`rating-${article._id}`}
                                         starCount={5}
                                         value={calculateAverageRating(article.ratings ?? [])}
-                                        editing={false} // Prevents user from changing rating
+                                        editing={true} // Prevents user from changing rating
+                                        onStarClick={(nextValue: number) =>
+                                            handleRatingSubmit(article._id, nextValue)
+                                        }
                                     />
                                 </td>
                             </tr>
