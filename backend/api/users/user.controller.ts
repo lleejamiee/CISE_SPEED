@@ -10,8 +10,8 @@ import {
 import { UserService } from './user.service';
 import { error } from 'console';
 import { CreateUserDto, LoginCredentialDto } from './user.dto';
-import { authentication, random } from 'utilities/encryption';
 import { User } from './user.schema';
+import { authentication, random } from 'src/utilities/encryption';
 
 @Controller('users')
 export class UserController {
