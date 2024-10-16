@@ -8,8 +8,8 @@
   ],
   "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "src/main.ts"
+      "src": "/api/(.*)",
+      "dest": "src/main.ts"
     }
   ]
 }
