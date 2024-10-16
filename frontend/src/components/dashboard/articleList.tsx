@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
 import { AuthenticationContext } from "@/context/AuthContext";
+import DeleteButton from "../ui/delete-button";
 
 /**
  *
@@ -72,10 +73,11 @@ function ArticleList() {
 
     useEffect(() => {
         if (articles.length > 0) {
-            if (toDelete) {
-                removeArticle();
-            } else if (selectedClaim || selectedSeMethodId) {
+            if (selectedClaim || selectedSeMethodId) {
                 filterBySEorClaim();
+            } else if (!toDelete) {
+                fetchApprovedArticles();
+                initialFilter();
             } else {
                 fetchApprovedArticles();
             }
@@ -112,36 +114,6 @@ function ArticleList() {
               });
 
         setFilteredArticles(filteredArticles);
-    };
-
-    const removeArticle = async () => {
-        if (
-            toDelete &&
-            window.confirm("Delete article " + toDelete.title + "?")
-        ) {
-            fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${toDelete._id}`,
-                {
-                    method: "DELETE",
-                }
-            )
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Error deleting article.");
-                    }
-                    setToDelete(undefined);
-                    fetchApprovedArticles();
-                    initialFilter();
-
-                    toast({ title: "Article deleted successfully." });
-                })
-                .catch((error) => {
-                    console.error("Deletion error:", error);
-                    toast({ title: "Failed to delete article." });
-                });
-        } else {
-            setToDelete(undefined);
-        }
     };
 
     return (
@@ -245,11 +217,10 @@ function ArticleList() {
                                 <td>{article.evidence}</td>
                                 {user?.role === "admin" && (
                                     <td>
-                                        <button
-                                            onClick={() => setToDelete(article)}
-                                        >
-                                            delete
-                                        </button>
+                                        <DeleteButton
+                                            toDelete={article}
+                                            setToDelete={setToDelete}
+                                        />
                                     </td>
                                 )}
                             </tr>
