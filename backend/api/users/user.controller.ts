@@ -11,7 +11,7 @@ import { UserService } from './user.service';
 import { error } from 'console';
 import { CreateUserDto, LoginCredentialDto } from './user.dto';
 import { User } from './user.schema';
-import { authentication, random } from 'utilities/encryption';
+import { authentication, random } from '../../utilities/encryption';
 
 @Controller('users')
 export class UserController {
