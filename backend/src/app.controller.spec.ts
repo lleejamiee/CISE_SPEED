@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { random } from './utilities/encryption';
+import { random } from '../utilities/encryption';
 
 describe('AppController', () => {
   let appController: AppController;
