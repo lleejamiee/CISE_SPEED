@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Article } from "@/type/Article";
 import { useToast } from "@/hooks/use-toast";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
+import { AuthenticationContext } from "@/context/AuthContext";
+import DeleteButton from "../ui/delete-button";
 
 /**
  *
@@ -18,6 +20,9 @@ function ArticleList() {
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
     const [selectedClaim, setSelectedClaim] = useState<string>("");
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+    const [toDelete, setToDelete] = useState<Article>();
+    const authContext = useContext(AuthenticationContext);
+    const { user } = authContext;
 
     const { toast } = useToast();
 
@@ -64,30 +69,20 @@ function ArticleList() {
         fetchApprovedArticles();
         initialFilter();
         fetchSeMethods();
-
-        console.log("first useEffect: ");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     }, []);
 
     useEffect(() => {
         if (articles.length > 0) {
-            console.log("HEREEEE");
             if (selectedClaim || selectedSeMethodId) {
                 filterBySEorClaim();
+            } else if (!toDelete) {
+                fetchApprovedArticles();
+                initialFilter();
             } else {
                 fetchApprovedArticles();
             }
         }
-
-        console.log("SE id: " + selectedSeMethodId);
-        console.log("Claim: " + selectedClaim);
-        console.log("articles in useEffect: :");
-        articles.map((article) => {
-            console.log(article.title);
-        });
-    }, [selectedSeMethodId, selectedClaim]);
+    }, [selectedSeMethodId, selectedClaim, toDelete]);
 
     //filtered list
     const initialFilter = () => {
@@ -119,11 +114,6 @@ function ArticleList() {
               });
 
         setFilteredArticles(filteredArticles);
-
-        console.log("articles in filterBySEClaim: :");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     };
 
     return (
@@ -212,6 +202,7 @@ function ArticleList() {
                             <th>DOI</th>
                             <th>Claim</th>
                             <th>Evidence</th>
+                            {user?.role === "admin" && <th>Delete</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -224,6 +215,14 @@ function ArticleList() {
                                 <td>{article.doi || "Not provided"}</td>
                                 <td>{article.claim}</td>
                                 <td>{article.evidence}</td>
+                                {user?.role === "admin" && (
+                                    <td>
+                                        <DeleteButton
+                                            toDelete={article}
+                                            setToDelete={setToDelete}
+                                        />
+                                    </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>
