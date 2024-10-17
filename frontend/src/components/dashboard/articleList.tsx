@@ -126,6 +126,14 @@ function ArticleList() {
         });
     };
 
+    useEffect(() => {
+        if (searchTerm !== "") {
+            initialFilter();
+        } else {
+            setFilteredArticles(articles); // Reset to all articles when search is empty
+        }
+    }, [searchTerm]);
+
     return (
         <div className={styles.approvedArticlesContainer}>
             <h2 className={styles.header}>Approved Articles</h2>
