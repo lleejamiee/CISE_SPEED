@@ -25,7 +25,7 @@ export function SignUp() {
 
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        fetch(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/users`, {
+        fetch(process.env.NEXT_PUBLIC_BACKEND_URL + `/users`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user),

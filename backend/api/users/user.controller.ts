@@ -10,16 +10,12 @@ import {
 import { UserService } from './user.service';
 import { error } from 'console';
 import { CreateUserDto, LoginCredentialDto } from './user.dto';
-import { authentication, random } from 'utilities/encryption';
 import { User } from './user.schema';
+import { authentication, random } from '../../utilities/encryption';
 
-@Controller('api/users')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Get('/test')
-  test() {
-    return this.userService.test();
-  }
 
   // Create & add a user
   @Post('/')

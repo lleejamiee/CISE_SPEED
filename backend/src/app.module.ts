@@ -3,9 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from './api/users/user.module';
-import { ArticleModule } from './api/articles/article.module';
-import { SeMethodModule } from './api/semethod/semethod.module';
+import { UserModule } from '../api/users/user.module';
+import { ArticleModule } from '../api/articles/article.module';
+import { SeMethodModule } from '../api/semethod/semethod.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { SeMethodModule } from './api/semethod/semethod.module';
     MongooseModule.forRoot(process.env.DB_URI),
     UserModule,
     ArticleModule,
-    SeMethodModule
+    SeMethodModule,
   ],
   controllers: [AppController],
   providers: [AppService],
