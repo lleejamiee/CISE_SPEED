@@ -202,32 +202,34 @@ function ArticleList() {
                     <p>No approved articles found.</p>
                 </div>
             ) : (
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Authors</th>
-                            <th>Journal</th>
-                            <th>Publication Year</th>
-                            <th>DOI</th>
-                            <th>Claim</th>
-                            <th>Evidence</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredArticles.map((article) => (
-                            <tr key={article._id}>
-                                <td>{article.title}</td>
-                                <td>{article.authors}</td>
-                                <td>{article.journal}</td>
-                                <td>{article.pubYear}</td>
-                                <td>{article.doi || "Not provided"}</td>
-                                <td>{article.claim}</td>
-                                <td>{article.evidence}</td>
+                <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Journal</th>
+                                <th>Publication Year</th>
+                                <th>DOI</th>
+                                <th>Claim</th>
+                                <th>Evidence</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredArticles.map((article) => (
+                                <tr key={article._id}>
+                                    <td>{article.title}</td>
+                                    <td>{article.authors}</td>
+                                    <td>{article.journal}</td>
+                                    <td>{article.pubYear}</td>
+                                    <td>{article.doi || "Not provided"}</td>
+                                    <td>{article.claim}</td>
+                                    <td>{article.evidence}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );
