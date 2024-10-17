@@ -72,6 +72,17 @@ export class ArticleController {
     return this.articleService.update(id, updateData);
   }
 
+  @Post(':id/rate') //Adds a rating to an article
+async rateArticle(
+    @Param('id') articleId: string,
+    @Body('rating') rating: number,
+) {
+    console.log(`Rating received: ${rating} for article ${articleId}`);
+    await this.articleService.addRating(articleId, rating);
+    return { message: 'Rating added successfully' };
+}
+
+
   // Delete article by ID
   @Delete(':id')
   async deleteArticle(@Param('id') id: string) {

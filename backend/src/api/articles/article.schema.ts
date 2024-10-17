@@ -52,6 +52,10 @@ export class Article {
   @Prop({ type: Date, default: Date.now })
   submittedAt: Date;
 
+  // Array of individual ratings (numbers between 0 and 5)
+  @Prop({ type: [Number], default: [] })
+  ratings: number[];
+  
   @Prop ({ type: MongooseSchema.Types.ObjectId, ref: 'SeMethod', required: false})
   seMethod: MongooseSchema.Types.ObjectId;
 

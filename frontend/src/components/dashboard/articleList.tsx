@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import useDebounce from "@/hooks/use-debounce";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
+import StarRatingComponent from "react-star-rating-component";
 
 /**
  *
@@ -153,6 +154,42 @@ function ArticleList() {
         selectedPubYear,
     ]);
 
+    const calculateAverageRating = (ratings: number[]): number => {
+        if (!ratings || ratings.length === 0) return 0;
+        const sum = ratings.reduce((a, b) => a + b, 0);
+        return sum / ratings.length;
+    };
+
+    const handleRatingSubmit = async (articleId: string, newRating: number) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${articleId}/rate`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ rating: newRating }),
+                }
+            );
+            if (!response.ok) {
+                throw new Error("Failed to submit rating.");
+            }
+
+            const updatedArticle = await response.json();
+            setArticles((prevArticles) =>
+                prevArticles.map((article) =>
+                    article._id === updatedArticle._id
+                        ? updatedArticle
+                        : article
+                )
+            );
+            toast({ title: "Rating submitted successfully!" });
+        } catch (err) {
+            toast({ title: "Failed to submit rating." });
+        }
+    };
+
     useEffect(() => {
         if (searchTerm !== "") {
             initialFilter();
@@ -290,6 +327,7 @@ function ArticleList() {
                                 <th>Journal</th>
                                 <th>Publication Year</th>
                                 <th>DOI</th>
+                                <th>Star Raiting</th>
                                 <th>Claim</th>
                                 <th>Evidence</th>
                             </tr>
@@ -302,6 +340,23 @@ function ArticleList() {
                                     <td>{article.journal}</td>
                                     <td>{article.pubYear}</td>
                                     <td>{article.doi || "Not provided"}</td>
+                                    <td>
+                                        <StarRatingComponent
+                                            name={`rating-${article._id}`}
+                                            starCount={5}
+                                            value={calculateAverageRating(
+                                                article.ratings ?? []
+                                            )}
+                                            editing={true} // Prevents user from changing rating
+                                            onStarClick={(nextValue: number) =>
+                                                handleRatingSubmit(
+                                                    article._id,
+                                                    nextValue
+                                                )
+                                            }
+                                        />
+                                    </td>
+
                                     <td>{article.claim}</td>
                                     <td>{article.evidence}</td>
                                 </tr>
