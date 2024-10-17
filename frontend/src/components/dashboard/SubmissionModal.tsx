@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BibtexParser } from "bibtex-js-parser";
 import { Article } from "@/type/Article";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -63,9 +64,9 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
   };
 
   const parseBibTeX = (bibtexText: string) => {
-    const entries = bibtexParse.toJSON(bibtexText);
+    const entries = BibtexParser.parseToJSON(bibtexText);
     if (entries.length > 0) {
-      const entry = entries[0].entryTags;
+      const entry = entries[0]; // Directly access the entry object
       setTitle(entry.title || "");
       setAuthors(entry.author ? entry.author.split(" and ") : [""]);
       setJournal(entry.journal || "");
