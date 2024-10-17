@@ -24,6 +24,7 @@ export type Article = {
   pages?: string;
   pubYear?: number;
   doi: string;
+  ratings?: number[];
   status: ArticleStatus;
   submittedAt?: Date;
   seMethod?: string; // reference to SeMethod Object Id
@@ -41,6 +42,7 @@ export const DefaultEmptyArticle: Article = {
   pages: "",
   pubYear: 0,
   doi: "",
+  ratings: [],
   status: ArticleStatus.PENDING_MODERATION, // Default status
   submittedAt: undefined,
   seMethod: "",

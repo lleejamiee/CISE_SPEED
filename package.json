@@ -4,7 +4,11 @@
   },
   "scripts": {
     "frontend": "npm run dev --prefix ./frontend",
-    "backend": "npm run start:dev --prefix ./backend", 
+    "backend": "npm run start:dev --prefix ./backend",
     "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "dependencies": {
+    "@retorquere/bibtex-parser": "^9.0.16",
+    "bibtex-parser-js": "^0.0.2"
   }
 }
