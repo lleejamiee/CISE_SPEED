@@ -74,6 +74,21 @@ function ArticleList() {
         }
     };
 
+    const initialFilter = () => {
+        const filteredArticles = articles.filter((article) => {
+            const titleMatch = article.title
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            const authorMatch =
+                article.authors
+                    ?.toLowerCase()
+                    .includes(searchTerm.toLowerCase()) || false; // Use optional chaining here
+            return titleMatch || authorMatch;
+        });
+
+        setFilteredArticles(filteredArticles);
+    };
+
     useEffect(() => {
         fetchApprovedArticles();
         fetchSeMethods();
@@ -105,9 +120,10 @@ function ArticleList() {
             const titleMatch = article.title
                 .toLowerCase()
                 .includes(debouncedSearchTerm.toLowerCase());
-            const authorMatch = article.authors
-                ?.toLowerCase()
-                .includes(debouncedSearchTerm.toLowerCase()) || false;
+            const authorMatch =
+                article.authors
+                    ?.toLowerCase()
+                    .includes(debouncedSearchTerm.toLowerCase()) || false;
 
             const seMethodMatch = selectedSeMethodId
                 ? article.seMethod === selectedSeMethodId
@@ -136,6 +152,14 @@ function ArticleList() {
         selectedClaim,
         selectedPubYear,
     ]);
+
+    useEffect(() => {
+        if (searchTerm !== "") {
+            initialFilter();
+        } else {
+            setFilteredArticles(articles); // Reset to all articles when search is empty
+        }
+    }, [searchTerm]);
 
     return (
         <div className={styles.approvedArticlesContainer}>
