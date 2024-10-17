@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BibtexParser } from "bibtex-js-parser";
 import { Article } from "@/type/Article";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -47,6 +48,29 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
     const updatedAuthors = [...authors];
     updatedAuthors[index] = value;
     setAuthors(updatedAuthors);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const text = await file.text();
+      parseBibTeX(text);
+    }
+  };
+
+  const parseBibTeX = (bibtexText: string) => {
+    const entries = BibtexParser.parseToJSON(bibtexText);
+    if (entries.length > 0) {
+      const entry = entries[0]; // Directly access the entry object
+      setTitle(entry.title || "");
+      setAuthors(entry.author ? entry.author.split(" and ") : [""]);
+      setJournal(entry.journal || "");
+      setYear(entry.year ? Number(entry.year) : "");
+      setVolume(entry.volume ? Number(entry.volume) : "");
+      setStartPage(entry.pages ? Number(entry.pages.split("-")[0]) : "");
+      setEndPage(entry.pages ? Number(entry.pages.split("-")[1]) : "");
+      setDoi(entry.doi || "");
+    }
   };
 
   // Handle form submission
@@ -248,6 +272,13 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
             name="doi"
             value={doi}
             onChange={(e) => setDoi(e.target.value)}
+          />
+
+          <label>Upload BibTeX:</label>
+          <Input
+          type="file"
+          accept=".bib"
+          onChange={handleFileUpload}
           />
 
           <div
