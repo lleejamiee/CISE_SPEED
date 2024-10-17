@@ -5,6 +5,7 @@ import { Article } from "@/type/Article"; // Adjust the import as needed
 import { useToast } from "@/hooks/use-toast"; // Assuming you are using this for notifications
 import StarRatingComponent from "react-star-rating-component";
 import styles from "../../styles/articleList.module.css";
+import { Claim, SeMethod } from "@/type/SeMethod";
 
 /**
  *
@@ -14,6 +15,11 @@ function ArticleList() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
+    const [seMethods, setSeMethods] = useState<SeMethod[]>([]);
+    const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
+    const [selectedClaim, setSelectedClaim] = useState<string>("");
+    const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+
     const { toast } = useToast();
 
     const fetchApprovedArticles = async () => {
@@ -26,14 +32,44 @@ function ArticleList() {
             }
             const data = await response.json();
             setArticles(data);
+            setFilteredArticles(data);
         } catch (err) {
             setError("Failed to load articles.");
             toast({ title: "Failed to load articles." });
         }
     };
 
+    const fetchSeMethods = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/semethods`
+            );
+            if (!response.ok) {
+                throw new Error(
+                    `Network response was not ok: ${response.statusText}`
+                );
+            }
+            const data: SeMethod[] = await response.json();
+            setSeMethods(data);
+        } catch (err: any) {
+            console.error("Error fetching SE methods:", err);
+            setError("Failed to load SE methods.");
+            toast({
+                title: "Failed to load SE methods.",
+                description: err.message || "An error occurred.",
+            });
+        }
+    };
+
     useEffect(() => {
         fetchApprovedArticles();
+        initialFilter();
+        fetchSeMethods();
+
+        console.log("first useEffect: ");
+        filteredArticles.map((article) => {
+            console.log(article.title);
+        });
     }, []);
 
     // Helper function to calculate the average rating
@@ -44,15 +80,41 @@ function ArticleList() {
     };
 
     //filtered list
-    const filteredArticles = articles.filter((article) => {
-        const titleMatch = article.title
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
-        const authorMatch =
-            article.authors?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            false; // Use optional chaining here
-        return titleMatch || authorMatch;
-    });
+    const initialFilter = () => {
+        const filteredArticles = articles.filter((article) => {
+            const titleMatch = article.title
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            const authorMatch =
+                article.authors
+                    ?.toLowerCase()
+                    .includes(searchTerm.toLowerCase()) || false; // Use optional chaining here
+            return titleMatch || authorMatch;
+        });
+
+        setFilteredArticles(filteredArticles);
+    };
+
+    // Filtering articles by SE Method & Claim
+    const filterBySEorClaim = () => {
+        const filteredArticles = selectedClaim
+            ? articles.filter((article) => {
+                  return (
+                      article.seMethod === selectedSeMethodId &&
+                      article.claim === selectedClaim
+                  );
+              })
+            : articles.filter((article) => {
+                  return article.seMethod === selectedSeMethodId;
+              });
+
+        setFilteredArticles(filteredArticles);
+
+        console.log("articles in filterBySEClaim: :");
+        filteredArticles.map((article) => {
+            console.log(article.title);
+        });
+    };
 
     const handleRatingSubmit = async (articleId: string, newRating: number) => {
         try {
@@ -94,6 +156,63 @@ function ArticleList() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={styles.searchBar}
             />
+            <label htmlFor="claimSelect" style={{ marginRight: "8px" }}>
+                Select SE Method:
+            </label>
+            <select
+                id="seMethodSelect"
+                onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedSeMethodId(value);
+                    setSelectedClaim("");
+                }}
+                style={{
+                    border: "1px solid #d3d3d3",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    width: "100%",
+                    marginBottom: "16px",
+                }}
+                value={selectedSeMethodId}
+            >
+                <option value="">-- Select SE Method --</option>
+                {seMethods.map((method) => (
+                    <option key={method._id} value={method._id}>
+                        {method.name}
+                    </option>
+                ))}
+            </select>
+            {selectedSeMethodId && (
+                <div>
+                    <label htmlFor="claimSelect" style={{ marginRight: "8px" }}>
+                        Select Claim:
+                    </label>
+                    <select
+                        id="claimSelect"
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setSelectedClaim(value);
+                        }}
+                        style={{
+                            border: "1px solid #d3d3d3",
+                            borderRadius: "4px",
+                            padding: "8px",
+                            width: "100%",
+                            marginBottom: "16px",
+                        }}
+                        value={selectedClaim}
+                    >
+                        <option value="">-- Select Claim --</option>
+                        {seMethods
+                            .find((method) => method._id === selectedSeMethodId)
+                            ?.claims.map((claim: Claim, index: number) => (
+                                <option key={index} value={claim.name}>
+                                    {claim.name}
+                                </option>
+                            ))}
+                    </select>
+                </div>
+            )}
             {error ? (
                 <div className="text-center">
                     <p>{error}</p>
@@ -112,6 +231,8 @@ function ArticleList() {
                             <th>Publication Year</th>
                             <th>DOI</th>
                             <th>Rating</th>
+                            <th>Claim</th>
+                            <th>Evidence</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,6 +254,8 @@ function ArticleList() {
                                         }
                                     />
                                 </td>
+                                <td>{article.claim}</td>
+                                <td>{article.evidence}</td>
                             </tr>
                         ))}
                     </tbody>

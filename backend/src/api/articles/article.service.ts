@@ -8,11 +8,11 @@ import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
 import { ArticleDTO } from './article.dto';
 
-@Injectable()
 /**
  * Service to manage article data and business logic.
  * Provides methods for CRUD operations.
  */
+@Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,

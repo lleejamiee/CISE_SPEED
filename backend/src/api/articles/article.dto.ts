@@ -1,4 +1,4 @@
-import { ArticleStatus } from './article.schema';
+import { ArticleStatus, Evidence } from './article.schema';
 
 /**
  * Data Transfer Object (DTO) for transferring article data.
@@ -12,5 +12,8 @@ export class ArticleDTO {
   pages: string;
   doi: string;
   status: ArticleStatus; // defaults to ArticleStatus.PENDING_MODERATION
-  submittedAt: Date;
+  submittedAt: Date; 
+  seMethod: string; // reference to SeMethod Object Id
+  claim: string;
+  evidence: Evidence;
 }
