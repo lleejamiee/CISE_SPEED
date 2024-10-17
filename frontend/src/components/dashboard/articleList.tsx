@@ -26,6 +26,8 @@ function ArticleList() {
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
 
     const { toast } = useToast();
+    const [sortColumn, setSortColumn] = useState<string>("title");
+    const [sortDirection, setSortDirection] = useState<string>("asc");
 
     // Generate array of years from 1900 to current year
     const years = Array.from(
@@ -95,6 +97,7 @@ function ArticleList() {
         fetchSeMethods();
 
         console.log("--First useEffect--");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -107,17 +110,21 @@ function ArticleList() {
         console.log("Claim: " + selectedClaim);
         console.log("Search Term: " + searchTerm);
         console.log("Pub Year: " + selectedPubYear);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         articles,
         debouncedSearchTerm,
         selectedSeMethodId,
         selectedClaim,
         selectedPubYear,
+        sortColumn,
+        sortDirection,
+        searchTerm,
     ]);
 
     // Filter articles by author/title, SE method, claim, and pub year
     const filterArticles = useCallback(() => {
-        const filtered = articles.filter((article) => {
+        let filtered = articles.filter((article) => {
             const titleMatch = article.title
                 .toLowerCase()
                 .includes(debouncedSearchTerm.toLowerCase());
@@ -144,6 +151,30 @@ function ArticleList() {
             );
         });
 
+        filtered = filtered.sort((a, b) => {
+            let comparison = 0;
+
+            if (sortColumn === "title") {
+                comparison = (a.title || "").localeCompare(b.title || "");
+            } else if (sortColumn === "authors") {
+                comparison = (a.authors || "").localeCompare(b.authors || "");
+            } else if (sortColumn === "pubYear") {
+                comparison = (a.pubYear || 0) - (b.pubYear || 0);
+            } else if (sortColumn === "journal") {
+                comparison = (a.journal || "").localeCompare(b.journal || "");
+            } else if (sortColumn === "doi") {
+                comparison = (a.doi || "").localeCompare(b.doi || "");
+            } else if (sortColumn === "ratings") {
+                comparison = (a.pubYear || 0) - (b.pubYear || 0);
+            } else if (sortColumn === "claim") {
+                comparison = (a.claim || "").localeCompare(b.claim || "");
+            } else if (sortColumn === "evidence") {
+                comparison = (a.evidence || "").localeCompare(b.evidence || "");
+            }
+
+            return sortDirection === "asc" ? comparison : -comparison;
+        });
+
         setFilteredArticles(filtered);
         console.log("Filtered Articles: " + filtered.length);
     }, [
@@ -152,7 +183,16 @@ function ArticleList() {
         selectedSeMethodId,
         selectedClaim,
         selectedPubYear,
+        sortColumn,
+        sortDirection,
     ]);
+
+    const handleSort = (column: string) => {
+        const newDirection =
+            sortColumn === column && sortDirection === "asc" ? "desc" : "asc";
+        setSortColumn(column);
+        setSortDirection(newDirection);
+    };
 
     const calculateAverageRating = (ratings: number[]): number => {
         if (!ratings || ratings.length === 0) return 0;
@@ -165,26 +205,28 @@ function ArticleList() {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${articleId}/rate`,
                 {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify({ rating: newRating }),
                 }
             );
             if (!response.ok) {
-                throw new Error('Failed to submit rating.');
+                throw new Error("Failed to submit rating.");
             }
-    
+
             const updatedArticle = await response.json();
             setArticles((prevArticles) =>
                 prevArticles.map((article) =>
-                    article._id === updatedArticle._id ? updatedArticle : article
+                    article._id === updatedArticle._id
+                        ? updatedArticle
+                        : article
                 )
             );
-            toast({ title: 'Rating submitted successfully!' });
+            toast({ title: "Rating submitted successfully!" });
         } catch (err) {
-            toast({ title: 'Failed to submit rating.' });
+            toast({ title: "Failed to submit rating." });
         }
     };
 
@@ -194,6 +236,7 @@ function ArticleList() {
         } else {
             setFilteredArticles(articles); // Reset to all articles when search is empty
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
 
     return (
@@ -320,14 +363,118 @@ function ArticleList() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Authors</th>
-                                <th>Journal</th>
-                                <th>Publication Year</th>
-                                <th>DOI</th>
-                                <th>Star Raiting</th>
-                                <th>Claim</th>
-                                <th>Evidence</th>
+                                <th>
+                                    <span>Title</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("title")}
+                                        aria-label="Sort by title"
+                                    >
+                                        sort
+                                        {sortColumn === "title" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Authors</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("authors")}
+                                        aria-label="Sort by authors"
+                                    >
+                                        sort
+                                        {sortColumn === "authors" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <th>
+                                        <span>Journal</span>
+                                        <br></br>
+                                        <button
+                                            className={styles.sortButton}
+                                            onClick={() =>
+                                                handleSort("journal")
+                                            }
+                                            aria-label="Sort by journal"
+                                        >
+                                            sort
+                                            {sortColumn === "journal" &&
+                                                (sortDirection === "asc"
+                                                    ? "↑"
+                                                    : "↓")}
+                                        </button>
+                                    </th>
+                                </th>
+                                <th>
+                                    <span>Publication Year</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("pubYear")}
+                                        aria-label="Sort by publication year"
+                                    >
+                                        sort
+                                        {sortColumn === "pubYear" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>DOI</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("doi")}
+                                        aria-label="Sort by doi"
+                                    >
+                                        sort
+                                        {sortColumn === "doi" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Star Rating</span>
+                                </th>
+                                <th>
+                                    <span>Claim</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("claim")}
+                                        aria-label="Sort by claim"
+                                    >
+                                        sort
+                                        {sortColumn === "claim" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Evidence</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("evidence")}
+                                        aria-label="Sort by evidence"
+                                    >
+                                        sort
+                                        {sortColumn === "evidence" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -339,14 +486,19 @@ function ArticleList() {
                                     <td>{article.pubYear}</td>
                                     <td>{article.doi || "Not provided"}</td>
                                     <td>
-                                    <Rating
-                                        name={`rating-${article._id}`}
-                                        value={calculateAverageRating(article.ratings ?? [])}
-                                        onChange={(event, newValue) =>
-                                            handleRatingSubmit(article._id, newValue || 0)
-                                        }
-                                        precision={0.5}
-                                    />
+                                        <Rating
+                                            name={`rating-${article._id}`}
+                                            value={calculateAverageRating(
+                                                article.ratings ?? []
+                                            )}
+                                            onChange={(event, newValue) =>
+                                                handleRatingSubmit(
+                                                    article._id,
+                                                    newValue || 0
+                                                )
+                                            }
+                                            precision={0.5}
+                                        />
                                     </td>
 
                                     <td>{article.claim}</td>
