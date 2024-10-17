@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Article } from "@/type/Article"; // Adjust the import as needed
 import { useToast } from "@/hooks/use-toast"; // Assuming you are using this for notifications
-import StarRatingComponent from "react-star-rating-component";
+import { Rating } from "@mui/material"; // Material-UI Rating component
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
 
@@ -17,6 +17,7 @@ function ArticleList() {
     const [error, setError] = useState<string | null>(null);
     const [seMethods, setSeMethods] = useState<SeMethod[]>([]);
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
+
     const [selectedClaim, setSelectedClaim] = useState<string>("");
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
 
@@ -65,11 +66,6 @@ function ArticleList() {
         fetchApprovedArticles();
         initialFilter();
         fetchSeMethods();
-
-        console.log("first useEffect: ");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     }, []);
 
     // Helper function to calculate the average rating
@@ -79,7 +75,7 @@ function ArticleList() {
         return sum / ratings.length;
     };
 
-    //filtered list
+    // Filtered list
     const initialFilter = () => {
         const filteredArticles = articles.filter((article) => {
             const titleMatch = article.title
@@ -109,11 +105,6 @@ function ArticleList() {
               });
 
         setFilteredArticles(filteredArticles);
-
-        console.log("articles in filterBySEClaim: :");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
     };
 
     const handleRatingSubmit = async (articleId: string, newRating: number) => {
@@ -143,8 +134,6 @@ function ArticleList() {
             toast({ title: 'Failed to submit rating.' });
         }
     };
-    
-    
 
     return (
         <div className={styles.approvedArticlesContainer}>
@@ -243,15 +232,14 @@ function ArticleList() {
                                 <td>{article.journal}</td>
                                 <td>{article.pubYear}</td>
                                 <td>{article.doi || "Not provided"}</td>
-                                <td>
-                                    <StarRatingComponent
+                                <td className="relative z-0">
+                                    <Rating
                                         name={`rating-${article._id}`}
-                                        starCount={5}
                                         value={calculateAverageRating(article.ratings ?? [])}
-                                        editing={true} // Prevents user from changing rating
-                                        onStarClick={(nextValue: number) =>
-                                            handleRatingSubmit(article._id, nextValue)
+                                        onChange={(event, newValue) =>
+                                            handleRatingSubmit(article._id, newValue || 0)
                                         }
+                                        precision={0.5}
                                     />
                                 </td>
                                 <td>{article.claim}</td>
