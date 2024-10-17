@@ -12,10 +12,10 @@ import { Claim, SeMethod } from "@/type/SeMethod";
  * @returns Approved articles component.
  */
 function ArticleList() {
-    const [articles, setArticles] = useState<Article[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [articles, setArticles] = useState<Article[]>([]); //init articles
+    const [searchTerm, setSearchTerm] = useState<string>(""); //init search
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); //error message
     const [seMethods, setSeMethods] = useState<SeMethod[]>([]);
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
     const [selectedClaim, setSelectedClaim] = useState<string>("");
@@ -23,16 +23,17 @@ function ArticleList() {
         undefined
     );
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
-
     const { toast } = useToast();
+    const [sortColumn, setSortColumn] = useState<string>("title");
+    const [sortDirection, setSortDirection] = useState<string>("asc");
 
-    // Generate array of years from 1900 to current year
+    //generate array of years from 1900 to current year
     const years = Array.from(
         { length: new Date().getFullYear() - 1900 + 1 },
         (_, i) => 1900 + i
     ).reverse();
 
-    // Fetch approved articles from database
+    //fetch approved articles from database
     const fetchApprovedArticles = async () => {
         try {
             const response = await fetch(
@@ -51,7 +52,7 @@ function ArticleList() {
         }
     };
 
-    // Fetch SE Methods from database
+    //fetch SE Methods from database
     const fetchSeMethods = async () => {
         try {
             const response = await fetch(
@@ -94,6 +95,7 @@ function ArticleList() {
         fetchSeMethods();
 
         console.log("--First useEffect--");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -106,17 +108,21 @@ function ArticleList() {
         console.log("Claim: " + selectedClaim);
         console.log("Search Term: " + searchTerm);
         console.log("Pub Year: " + selectedPubYear);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         articles,
         debouncedSearchTerm,
         selectedSeMethodId,
         selectedClaim,
         selectedPubYear,
+        sortColumn,
+        sortDirection,
+        searchTerm,
     ]);
 
-    // Filter articles by author/title, SE method, claim, and pub year
+    //filter articles by author/title, SE method, claim, and pub year
     const filterArticles = useCallback(() => {
-        const filtered = articles.filter((article) => {
+        let filtered = articles.filter((article) => {
             const titleMatch = article.title
                 .toLowerCase()
                 .includes(debouncedSearchTerm.toLowerCase());
@@ -142,6 +148,27 @@ function ArticleList() {
                 pubYearMatch
             );
         });
+        filtered = filtered.sort((a, b) => {
+            let comparison = 0;
+
+            if (sortColumn === "title") {
+                comparison = (a.title || "").localeCompare(b.title || "");
+            } else if (sortColumn === "authors") {
+                comparison = (a.authors || "").localeCompare(b.authors || "");
+            } else if (sortColumn === "pubYear") {
+                comparison = (a.pubYear || 0) - (b.pubYear || 0);
+            } else if (sortColumn === "journal") {
+                comparison = (a.journal || "").localeCompare(b.journal || "");
+            } else if (sortColumn === "doi") {
+                comparison = (a.doi || "").localeCompare(b.doi || "");
+            } else if (sortColumn === "claim") {
+                comparison = (a.claim || "").localeCompare(b.claim || "");
+            } else if (sortColumn === "evidence") {
+                comparison = (a.evidence || "").localeCompare(b.evidence || "");
+            }
+
+            return sortDirection === "asc" ? comparison : -comparison;
+        });
 
         setFilteredArticles(filtered);
         console.log("Filtered Articles: " + filtered.length);
@@ -151,14 +178,24 @@ function ArticleList() {
         selectedSeMethodId,
         selectedClaim,
         selectedPubYear,
+        sortColumn,
+        sortDirection,
     ]);
+
+    const handleSort = (column: string) => {
+        const newDirection =
+            sortColumn === column && sortDirection === "asc" ? "desc" : "asc";
+        setSortColumn(column);
+        setSortDirection(newDirection);
+    };
 
     useEffect(() => {
         if (searchTerm !== "") {
             initialFilter();
         } else {
-            setFilteredArticles(articles); // Reset to all articles when search is empty
+            setFilteredArticles(articles); //reset to show all articles
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
 
     return (
@@ -285,13 +322,110 @@ function ArticleList() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Authors</th>
-                                <th>Journal</th>
-                                <th>Publication Year</th>
-                                <th>DOI</th>
-                                <th>Claim</th>
-                                <th>Evidence</th>
+                                <th>
+                                    <span>Title</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("title")}
+                                        aria-label="Sort by title"
+                                    >
+                                        sort
+                                        {sortColumn === "title" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Authors</span>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("authors")}
+                                        aria-label="Sort by authors"
+                                    >
+                                        sort
+                                        {sortColumn === "authors" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Journal</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("journal")}
+                                        aria-label="Sort by journal"
+                                    >
+                                        sort
+                                        {sortColumn === "journal" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Publication Year</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("pubYear")}
+                                        aria-label="Sort by publication year"
+                                    >
+                                        sort
+                                        {sortColumn === "pubYear" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>DOI</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("doi")}
+                                        aria-label="Sort by doi"
+                                    >
+                                        sort
+                                        {sortColumn === "doi" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
+                                <th>
+                                    <span>Claim</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("claim")}
+                                        aria-label="Sort by claim"
+                                    >
+                                        sort
+                                        {sortColumn === "claim" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>{" "}
+                                <th>
+                                    <span>Evidence</span>
+                                    <br></br>
+                                    <button
+                                        className={styles.sortButton}
+                                        onClick={() => handleSort("evidence")}
+                                        aria-label="Sort by evidence"
+                                    >
+                                        sort
+                                        {sortColumn === "evidence" &&
+                                            (sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓")}
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
