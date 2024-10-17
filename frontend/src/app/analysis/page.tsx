@@ -4,10 +4,12 @@ import Navbar from "@/components/navbar/navbar";
 export default function analysisPage() {
     return (
         <div>
-            <Navbar />
-            <main>
-                <AnalysisQueue />
-            </main>
-        </div>
+        <header style={{ position: "sticky", top: 0, zIndex: 10 }}>
+          <Navbar />
+        </header>
+        <main>
+          <AnalysisQueue />
+        </main>
+      </div>
     );
 }

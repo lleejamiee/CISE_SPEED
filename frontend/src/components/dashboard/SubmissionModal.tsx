@@ -9,7 +9,7 @@ interface SubmissionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
-    newArticle: Omit<Article, "_id" | "submittedAt" | "status">
+    newArticle: Omit<Article, "_id" | "submittedAt" | "status" | "seMethod" | "claim" | "evidence">
   ) => void;
 }
 
@@ -60,7 +60,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
 
     const pages = `${startPage}-${endPage}`;
 
-    const newArticle: Omit<Article, "_id" | "submittedAt" | "status"> = {
+    const newArticle: Omit<Article, "_id" | "submittedAt" | "status" | "seMethod" | "claim" | "evidence"> = {
       title,
       authors: authors.join(", "),
       journal,
