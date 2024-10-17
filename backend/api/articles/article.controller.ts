@@ -72,7 +72,7 @@ export class ArticleController {
     return this.articleService.update(id, updateData);
   }
 
-  @Post(':id/rate')
+  @Post(':id/rate') //Adds a rating to an article
 async rateArticle(
     @Param('id') articleId: string,
     @Body('rating') rating: number,
