@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types, Schema as MongooseSchema } from 'mongoose';
+import { SeMethod } from '../semethod/semethod.schema';
 
 export type ArticleDocument = HydratedDocument<Article>;
 
@@ -9,6 +10,14 @@ export enum ArticleStatus {
   PENDING_ANALYSIS = 'pending_analysis',
   APPROVED = 'approved',
   REJECTED = 'rejected',
+}
+
+// Enum representing the possible results of evidence
+export enum Evidence {
+  STRONG_SUPPORT = 'strong_support',
+  WEAK_SUPPORT = 'weak_support',
+  STRONG_AGAINST = 'strong_against',
+  WEAK_AGAINST = 'weak_against',
 }
 
 /**
@@ -42,6 +51,19 @@ export class Article {
 
   @Prop({ type: Date, default: Date.now })
   submittedAt: Date;
+
+  // Array of individual ratings (numbers between 0 and 5)
+  @Prop({ type: [Number], default: [] })
+  ratings: number[];
+  
+  @Prop ({ type: MongooseSchema.Types.ObjectId, ref: 'SeMethod', required: false})
+  seMethod: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: String, required: false })
+  claim: string;
+
+  @Prop({ enum: Evidence, required: false})
+  evidence: Evidence;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

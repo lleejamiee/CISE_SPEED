@@ -1,6 +1,5 @@
-"use client";
-
 import { useState } from "react";
+import { BibtexParser } from "bibtex-js-parser";
 import { Article } from "@/type/Article";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -9,13 +8,10 @@ interface SubmissionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
-    newArticle: Omit<Article, "_id" | "submittedAt" | "status">
+    newArticle: Omit<Article, "_id" | "submittedAt" | "status" | "seMethod" | "claim" | "evidence">
   ) => void;
 }
 
-/**
- * SubmissionModal component for article submission
- */
 const SubmissionModal: React.FC<SubmissionModalProps> = ({
   isOpen,
   onClose,
@@ -54,13 +50,36 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
     setAuthors(updatedAuthors);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const text = await file.text();
+      parseBibTeX(text);
+    }
+  };
+
+  const parseBibTeX = (bibtexText: string) => {
+    const entries = BibtexParser.parseToJSON(bibtexText);
+    if (entries.length > 0) {
+      const entry = entries[0]; // Directly access the entry object
+      setTitle(entry.title || "");
+      setAuthors(entry.author ? entry.author.split(" and ") : [""]);
+      setJournal(entry.journal || "");
+      setYear(entry.year ? Number(entry.year) : "");
+      setVolume(entry.volume ? Number(entry.volume) : "");
+      setStartPage(entry.pages ? Number(entry.pages.split("-")[0]) : "");
+      setEndPage(entry.pages ? Number(entry.pages.split("-")[1]) : "");
+      setDoi(entry.doi || "");
+    }
+  };
+
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const pages = `${startPage}-${endPage}`;
 
-    const newArticle: Omit<Article, "_id" | "submittedAt" | "status"> = {
+    const newArticle: Omit<Article, "_id" | "submittedAt" | "status" | "seMethod" | "claim" | "evidence"> = {
       title,
       authors: authors.join(", "),
       journal,
@@ -97,6 +116,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        zIndex: 9999, // Ensure a high z-index so the modal is on top of other elements
       }}
     >
       <div
@@ -107,6 +127,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
           width: "500px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           position: "relative",
+          zIndex: 10000, // Ensure the content has an even higher z-index than the overlay
         }}
       >
         <button
@@ -251,6 +272,13 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
             name="doi"
             value={doi}
             onChange={(e) => setDoi(e.target.value)}
+          />
+
+          <label>Upload BibTeX:</label>
+          <Input
+          type="file"
+          accept=".bib"
+          onChange={handleFileUpload}
           />
 
           <div

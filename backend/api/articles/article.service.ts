@@ -8,11 +8,11 @@ import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
 import { ArticleDTO } from './article.dto';
 
-@Injectable()
 /**
  * Service to manage article data and business logic.
  * Provides methods for CRUD operations.
  */
+@Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
@@ -100,5 +100,14 @@ export class ArticleService {
     const duplicates = await this.articleModel.find(query).exec();
 
     return duplicates;
+  }
+
+  // Adds the rating to the list of ratings and updates the average
+  async addRating(articleId: string, rating: number) {
+    const article = await this.articleModel.findById(articleId);
+    if (rating >= 0 && rating <= 5) {
+      article.ratings.push(rating);
+      await article.save();
+    }
   }
 }
