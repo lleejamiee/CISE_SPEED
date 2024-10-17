@@ -1,5 +1,5 @@
 .approvedArticlesContainer {
-    padding: 20px;
+    padding: 0 20px 20px 20px;
 }
 
 .header {
@@ -7,12 +7,44 @@
     margin-bottom: 10px;
 }
 
+.filterContainer {
+    border: 1px solid #d3d3d3;
+    border-radius: 8px;
+    padding: 0 10px 10px 10px; 
+    margin-bottom: 16px;
+}
+
+.rowContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.label {
+    margin-right: 8px;
+    font-weight: bold;
+}
+
 .searchBar {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    height: 35px;
+}
+
+.selectBox {
+    border: 1px solid #d3d3d3;
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+}
+
+.tableContainer {
+    max-height: 60vh;
+    overflow-y: auto;
 }
 
 .table {
