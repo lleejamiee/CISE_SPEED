@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Article } from "@/type/Article";
 import { useToast } from "@/hooks/use-toast";
+import useDebounce from "@/hooks/use-debounce";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
 
@@ -13,14 +14,25 @@ import { Claim, SeMethod } from "@/type/SeMethod";
 function ArticleList() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const debouncedSearchTerm = useDebounce(searchTerm, 500);
     const [error, setError] = useState<string | null>(null);
     const [seMethods, setSeMethods] = useState<SeMethod[]>([]);
     const [selectedSeMethodId, setSelectedSeMethodId] = useState<string>("");
     const [selectedClaim, setSelectedClaim] = useState<string>("");
+    const [selectedPubYear, setSelectedPubYear] = useState<number | undefined>(
+        undefined
+    );
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
 
     const { toast } = useToast();
 
+    // Generate array of years from 1900 to current year
+    const years = Array.from(
+        { length: new Date().getFullYear() - 1900 + 1 },
+        (_, i) => 1900 + i
+    ).reverse();
+
+    // Fetch approved articles from database
     const fetchApprovedArticles = async () => {
         try {
             const response = await fetch(
@@ -32,12 +44,14 @@ function ArticleList() {
             const data = await response.json();
             setArticles(data);
             setFilteredArticles(data);
+            console.log("Fetched articles: " + data.length);
         } catch (err) {
             setError("Failed to load articles.");
             toast({ title: "Failed to load articles." });
         }
     };
 
+    // Fetch SE Methods from database
     const fetchSeMethods = async () => {
         try {
             const response = await fetch(
@@ -62,137 +76,178 @@ function ArticleList() {
 
     useEffect(() => {
         fetchApprovedArticles();
-        initialFilter();
         fetchSeMethods();
 
-        console.log("first useEffect: ");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
+        console.log("--First useEffect--");
     }, []);
 
     useEffect(() => {
         if (articles.length > 0) {
-            console.log("HEREEEE");
-            if (selectedClaim || selectedSeMethodId) {
-                filterBySEorClaim();
-            } else {
-                fetchApprovedArticles();
-            }
+            console.log("--HEREEEE--");
+            filterArticles();
         }
 
         console.log("SE id: " + selectedSeMethodId);
         console.log("Claim: " + selectedClaim);
-        console.log("articles in useEffect: :");
-        articles.map((article) => {
-            console.log(article.title);
-        });
-    }, [selectedSeMethodId, selectedClaim]);
+        console.log("Search Term: " + searchTerm);
+        console.log("Pub Year: " + selectedPubYear);
+    }, [
+        articles,
+        debouncedSearchTerm,
+        selectedSeMethodId,
+        selectedClaim,
+        selectedPubYear,
+    ]);
 
-    //filtered list
-    const initialFilter = () => {
-        const filteredArticles = articles.filter((article) => {
+    // Filter articles by author/title, SE method, claim, and pub year
+    const filterArticles = useCallback(() => {
+        const filtered = articles.filter((article) => {
             const titleMatch = article.title
                 .toLowerCase()
-                .includes(searchTerm.toLowerCase());
-            const authorMatch =
-                article.authors
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) || false; // Use optional chaining here
-            return titleMatch || authorMatch;
+                .includes(debouncedSearchTerm.toLowerCase());
+            const authorMatch = article.authors
+                ?.toLowerCase()
+                .includes(debouncedSearchTerm.toLowerCase()) || false;
+
+            const seMethodMatch = selectedSeMethodId
+                ? article.seMethod === selectedSeMethodId
+                : true;
+            const claimMatch = selectedClaim
+                ? article.claim === selectedClaim
+                : true;
+            const pubYearMatch = selectedPubYear
+                ? article.pubYear === selectedPubYear
+                : true;
+
+            return (
+                (titleMatch || authorMatch) &&
+                seMethodMatch &&
+                claimMatch &&
+                pubYearMatch
+            );
         });
 
-        setFilteredArticles(filteredArticles);
-    };
-
-    // Filtering articles by SE Method & Claim
-    const filterBySEorClaim = () => {
-        const filteredArticles = selectedClaim
-            ? articles.filter((article) => {
-                  return (
-                      article.seMethod === selectedSeMethodId &&
-                      article.claim === selectedClaim
-                  );
-              })
-            : articles.filter((article) => {
-                  return article.seMethod === selectedSeMethodId;
-              });
-
-        setFilteredArticles(filteredArticles);
-
-        console.log("articles in filterBySEClaim: :");
-        filteredArticles.map((article) => {
-            console.log(article.title);
-        });
-    };
+        setFilteredArticles(filtered);
+        console.log("Filtered Articles: " + filtered.length);
+    }, [
+        articles,
+        debouncedSearchTerm,
+        selectedSeMethodId,
+        selectedClaim,
+        selectedPubYear,
+    ]);
 
     return (
         <div className={styles.approvedArticlesContainer}>
-            <h2 className={styles.header}>Approved Articles</h2>
-            <input
-                type="text"
-                placeholder="Search by title or author"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchBar}
-            />
-            <label htmlFor="claimSelect" style={{ marginRight: "8px" }}>
-                Select SE Method:
-            </label>
-            <select
-                id="seMethodSelect"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    setSelectedSeMethodId(value);
-                    setSelectedClaim("");
-                }}
-                style={{
-                    border: "1px solid #d3d3d3",
-                    borderRadius: "4px",
-                    padding: "8px",
-                    width: "100%",
-                    marginBottom: "16px",
-                }}
-                value={selectedSeMethodId}
-            >
-                <option value="">-- Select SE Method --</option>
-                {seMethods.map((method) => (
-                    <option key={method._id} value={method._id}>
-                        {method.name}
-                    </option>
-                ))}
-            </select>
-            {selectedSeMethodId && (
+            <div className={styles.filterContainer}>
+                <h2>Filter Articles</h2>
                 <div>
-                    <label htmlFor="claimSelect" style={{ marginRight: "8px" }}>
-                        Select Claim:
+                    <label htmlFor="authorTitleSearch" className={styles.label}>
+                        Title or Author:
                     </label>
-                    <select
-                        id="claimSelect"
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setSelectedClaim(value);
-                        }}
-                        style={{
-                            border: "1px solid #d3d3d3",
-                            borderRadius: "4px",
-                            padding: "8px",
-                            width: "100%",
-                            marginBottom: "16px",
-                        }}
-                        value={selectedClaim}
-                    >
-                        <option value="">-- Select Claim --</option>
-                        {seMethods
-                            .find((method) => method._id === selectedSeMethodId)
-                            ?.claims.map((claim: Claim, index: number) => (
-                                <option key={index} value={claim.name}>
-                                    {claim.name}
+                    <input
+                        id="authorTitleSearch"
+                        type="text"
+                        placeholder="Search by title or author"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchBar}
+                    />
+                </div>
+                <div className={styles.rowContainer}>
+                    <div style={{ flex: 1, marginRight: "8px" }}>
+                        <label htmlFor="pubYearSelect" className={styles.label}>
+                            Publication Year:
+                        </label>
+                        <select
+                            id="pubYearSelect"
+                            onChange={(e) => {
+                                const value =
+                                    e.target.value === ""
+                                        ? undefined
+                                        : parseInt(e.target.value);
+                                setSelectedPubYear(value);
+                            }}
+                            className={styles.selectBox}
+                            value={selectedPubYear}
+                        >
+                            <option value="">
+                                -- Select Publication Year --
+                            </option>
+                            {years.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
                                 </option>
                             ))}
-                    </select>
+                        </select>
+                    </div>
+                    <div style={{ flex: 1, marginRight: "8px" }}>
+                        <label
+                            htmlFor="seMethodSelect"
+                            className={styles.label}
+                        >
+                            SE Method:
+                        </label>
+                        <select
+                            id="seMethodSelect"
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setSelectedSeMethodId(value);
+                                setSelectedClaim("");
+                            }}
+                            className={styles.selectBox}
+                            value={selectedSeMethodId}
+                        >
+                            <option value="">-- Select SE Method --</option>
+                            {seMethods.map((method) => (
+                                <option key={method._id} value={method._id}>
+                                    {method.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        {selectedSeMethodId && (
+                            <div>
+                                <label
+                                    htmlFor="claimSelect"
+                                    className={styles.label}
+                                >
+                                    Select Claim:
+                                </label>
+                                <select
+                                    id="claimSelect"
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setSelectedClaim(value);
+                                    }}
+                                    className={styles.selectBox}
+                                    value={selectedClaim}
+                                >
+                                    <option value="">-- Select Claim --</option>
+                                    {seMethods
+                                        .find(
+                                            (method) =>
+                                                method._id ===
+                                                selectedSeMethodId
+                                        )
+                                        ?.claims.map(
+                                            (claim: Claim, index: number) => (
+                                                <option
+                                                    key={index}
+                                                    value={claim.name}
+                                                >
+                                                    {claim.name}
+                                                </option>
+                                            )
+                                        )}
+                                </select>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            )}
+            </div>
+            <h2 className={styles.header}>Approved Articles</h2>
             {error ? (
                 <div className="text-center">
                     <p>{error}</p>
