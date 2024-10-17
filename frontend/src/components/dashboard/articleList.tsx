@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import useDebounce from "@/hooks/use-debounce";
 import styles from "../../styles/articleList.module.css";
 import { Claim, SeMethod } from "@/type/SeMethod";
-import StarRatingComponent from "react-star-rating-component";
+import { Rating } from "@mui/material"; // Material-UI Rating component
 
 /**
  *
@@ -165,28 +165,26 @@ function ArticleList() {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${articleId}/rate`,
                 {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ rating: newRating }),
                 }
             );
             if (!response.ok) {
-                throw new Error("Failed to submit rating.");
+                throw new Error('Failed to submit rating.');
             }
-
+    
             const updatedArticle = await response.json();
             setArticles((prevArticles) =>
                 prevArticles.map((article) =>
-                    article._id === updatedArticle._id
-                        ? updatedArticle
-                        : article
+                    article._id === updatedArticle._id ? updatedArticle : article
                 )
             );
-            toast({ title: "Rating submitted successfully!" });
+            toast({ title: 'Rating submitted successfully!' });
         } catch (err) {
-            toast({ title: "Failed to submit rating." });
+            toast({ title: 'Failed to submit rating.' });
         }
     };
 
@@ -341,20 +339,14 @@ function ArticleList() {
                                     <td>{article.pubYear}</td>
                                     <td>{article.doi || "Not provided"}</td>
                                     <td>
-                                        <StarRatingComponent
-                                            name={`rating-${article._id}`}
-                                            starCount={5}
-                                            value={calculateAverageRating(
-                                                article.ratings ?? []
-                                            )}
-                                            editing={true} // Prevents user from changing rating
-                                            onStarClick={(nextValue: number) =>
-                                                handleRatingSubmit(
-                                                    article._id,
-                                                    nextValue
-                                                )
-                                            }
-                                        />
+                                    <Rating
+                                        name={`rating-${article._id}`}
+                                        value={calculateAverageRating(article.ratings ?? [])}
+                                        onChange={(event, newValue) =>
+                                            handleRatingSubmit(article._id, newValue || 0)
+                                        }
+                                        precision={0.5}
+                                    />
                                     </td>
 
                                     <td>{article.claim}</td>

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { BibtexParser } from "bibtex-js-parser";
 import { Article } from "@/type/Article";
@@ -14,9 +12,6 @@ interface SubmissionModalProps {
   ) => void;
 }
 
-/**
- * SubmissionModal component for article submission
- */
 const SubmissionModal: React.FC<SubmissionModalProps> = ({
   isOpen,
   onClose,
@@ -121,6 +116,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        zIndex: 9999, // Ensure a high z-index so the modal is on top of other elements
       }}
     >
       <div
@@ -131,6 +127,7 @@ const SubmissionModal: React.FC<SubmissionModalProps> = ({
           width: "500px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           position: "relative",
+          zIndex: 10000, // Ensure the content has an even higher z-index than the overlay
         }}
       >
         <button
