@@ -42,6 +42,11 @@
     width: 100%;
 }
 
+.tableContainer {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
 .table {
     width: 100%;
     border-collapse: collapse;
