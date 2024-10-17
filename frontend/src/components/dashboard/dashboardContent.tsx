@@ -70,13 +70,12 @@ export default function DashboardContent() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    margin: "20px",
+                    margin: "0 20px"
                 }}
             >
                 <h1>Dashboard</h1>
                 <Button onClick={openModal}>+ Submit Article</Button>
             </div>
-
             <SubmissionModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
