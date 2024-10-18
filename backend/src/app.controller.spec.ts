@@ -3,6 +3,47 @@ import { SeMethodController } from '../api/semethod/semethod.controller'
 import { SeMethodService } from '../api/semethod/semethod.service';
 import { ClaimDTO } from '../api/semethod/semethod.dto';
 import { SeMethod } from '../api/semethod/semethod.schema';
+import { ArticleController } from '../api/articles/article.controller';
+import { ArticleService } from '../api/articles/article.service';
+
+
+describe('ArticleController', () => {
+  let articleController: ArticleController;
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ let articleService: ArticleService;
+ 
+  const mockArticleService = {
+    addRating: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ArticleController],
+      providers: [
+        {
+          provide: ArticleService,
+          useValue: mockArticleService,
+        },
+      ],
+    }).compile();
+
+    articleController = module.get<ArticleController>(ArticleController);
+    articleService = module.get<ArticleService>(ArticleService);
+  });
+
+  describe('rateArticle', () => {
+    it('should add a rating to an article and return a success message', async () => {
+      const articleId = '123';
+      const rating = 5;
+
+      const result = await articleController.rateArticle(articleId, rating);
+
+      expect(mockArticleService.addRating).toHaveBeenCalledWith(articleId, rating);
+      expect(result).toEqual({ message: 'Rating added successfully' });
+    });
+  });
+});
+
 
 describe('SeMethodController', () => {
   let controller: SeMethodController;
